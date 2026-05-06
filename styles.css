@@ -331,12 +331,65 @@ html, body {
   color: var(--cfs-gold);
 }
 
+/* Hamburger — hidden on desktop */
+.nav-mobile-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  z-index: 101;
+}
+
+.nav-mobile-toggle span {
+  display: block;
+  width: 22px;
+  height: 1px;
+  background: var(--cfs-text-primary);
+  transition: transform var(--duration-fast) var(--ease-smooth),
+              opacity var(--duration-fast) var(--ease-smooth);
+}
+
+/* X state when open */
+.nav-open .nav-mobile-toggle span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-open .nav-mobile-toggle span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.nav-open .nav-mobile-toggle span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
 @media (max-width: 768px) {
   #cfs-nav {
     padding: 1.2rem 1.5rem;
   }
+
+  .nav-mobile-toggle {
+    display: flex;
+  }
+
   .nav-links {
     display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-md) var(--space-lg);
+    background: rgba(10, 14, 26, 0.97);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(201, 168, 76, 0.10);
+  }
+
+  .nav-open .nav-links {
+    display: flex;
+  }
+
+  .nav-links a.nav-cta {
+    width: 100%;
+    text-align: center;
   }
 }
 
@@ -1125,4 +1178,47 @@ html, body {
 
 .involvement-email-link:hover {
   opacity: 1;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE — SECTION FIXES
+═══════════════════════════════════════════════════════════ */
+
+/* TCFSC logistics 3-col → stack on mobile */
+.logistics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+@media (max-width: 768px) {
+  .logistics-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+}
+
+/* Mission: reduce top padding on mobile to avoid over-whitespace */
+@media (max-width: 768px) {
+  #mission {
+    padding-top: var(--space-2xl);
+    padding-bottom: var(--space-2xl);
+  }
+}
+
+/* Philosophy: tighten section padding on mobile */
+@media (max-width: 768px) {
+  #philosophy, #initiatives, #vision, #involvement {
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-xl);
+  }
+}
+
+/* Initiatives: ensure padding inside cards is comfortable on mobile */
+@media (max-width: 600px) {
+  .initiative-card {
+    padding: var(--space-md);
+  }
 }
