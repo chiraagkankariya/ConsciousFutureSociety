@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conscious Future – Hero Test</title>
+  <link rel="stylesheet" href="styles.css?v=4">
+</head>
+<body>
+
+  <section id="hero">
+    <!-- Depth layers (back to front) -->
+    <canvas id="stars"></canvas>
+    <div id="nebula"></div>
+    <div id="ambient-glow"></div>
+
+    <!-- Beings -->
+    <div id="stage">
+      <img class="being" id="original" src="assets/being.png" alt="">
+      <img class="being" id="clone-1"  src="assets/being.png" alt="">
+      <img class="being" id="clone-2"  src="assets/being.png" alt="">
+      <img class="being" id="clone-3"  src="assets/being.png" alt="">
+      <img class="being" id="clone-4"  src="assets/being.png" alt="">
+      <img class="being" id="clone-5"  src="assets/being.png" alt="">
+    </div>
+
+    <!-- Covers screen with light at animation end, transitions to next section -->
+    <div id="light-veil"></div>
+  </section>
+
+  <!-- Placeholder next section -->
+  <div id="next-section">
+    <p>Next Section</p>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="script.js?v=4"></script>
+</body>
+</html>
