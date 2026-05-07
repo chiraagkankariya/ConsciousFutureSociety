@@ -104,7 +104,7 @@ addClone('#clone-5', '-19vh', '-26vh', 0.8, 2,   8);
 
 // ── Clone 5 radiant ramp: extreme brightness at full illumination ──
 master.to('#clone-5', {
-  filter: 'brightness(6) drop-shadow(0 0 90px rgba(226,194,112,1)) drop-shadow(0 0 160px rgba(255,245,200,0.9))',
+  filter: 'brightness(6) drop-shadow(0 0 90px rgba(226,194,112,1)) drop-shadow(0 0 160px rgba(201,155,60,0.65))',
   ease:     'power2.in',
   duration: 1,
 }, 9);

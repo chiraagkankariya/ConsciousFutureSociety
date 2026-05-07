@@ -12,23 +12,27 @@
   --cfs-text-secondary: rgba(255, 255, 255, 0.55);
 
   /* Typography */
-  --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-body:    'Inter', system-ui, -apple-system, sans-serif;
+  --font-display:   'Cinzel', 'Trajan Pro', serif;
+  --font-editorial: 'Cormorant Garamond', Georgia, serif;
+  --font-body:      'Inter', system-ui, -apple-system, sans-serif;
 
-  --font-size-hero:  clamp(3rem, 8vw, 7rem);
-  --font-size-h1:    clamp(2.2rem, 5vw, 4rem);
-  --font-size-h2:    clamp(1.6rem, 3vw, 2.5rem);
+  --font-size-hero:  clamp(3rem, 8vw, 6.5rem);
+  --font-size-h1:    clamp(2rem, 4.5vw, 3.5rem);
+  --font-size-h2:    clamp(1.4rem, 2.5vw, 2.2rem);
   --font-size-h3:    clamp(1.2rem, 2vw, 1.6rem);
-  --font-size-body:  clamp(1rem, 1.2vw, 1.125rem);
-  --font-size-small: 0.875rem;
+  --font-size-body:  clamp(1rem, 1.2vw, 1.15rem);
+  --font-size-small: 0.8rem;
 
   --font-weight-light:   300;
   --font-weight-regular: 400;
   --font-weight-medium:  500;
   --font-weight-bold:    700;
 
-  --letter-spacing-wide:  0.08em;
-  --letter-spacing-wider: 0.15em;
+  --letter-spacing-wide:         0.08em;
+  --letter-spacing-wider:        0.15em;
+  --letter-spacing-cinzel-hero:  0.12em;
+  --letter-spacing-cinzel-title: 0.08em;
+  --letter-spacing-cinzel-sub:   0.06em;
   --line-height-tight:    1.1;
   --line-height-base:     1.6;
   --line-height-loose:    1.85;
@@ -196,11 +200,11 @@ html, body {
   /* GSAP ramps this further at t=9 */
   filter: brightness(3.0)
           drop-shadow(0 0 52px rgba(226, 194, 112, 0.85))
-          drop-shadow(0 0 108px rgba(255, 235, 170, 0.48));
+          drop-shadow(0 0 108px rgba(201, 155, 60, 0.35));
   z-index: 6;
 }
 
-/* ── Light veil — gold-to-white, covers screen at animation end ── */
+/* ── Light veil — gold center, collapses to navy-deep at edges ── */
 #light-veil {
   position: absolute;
   inset: 0;
@@ -210,9 +214,10 @@ html, body {
   background: radial-gradient(
     ellipse at 50% 46%,
     rgba(201, 168, 76,  1.00)  0%,
-    rgba(226, 194, 112, 0.96) 22%,
-    rgba(255, 245, 220, 1.00) 55%,
-    rgba(255, 255, 255, 1.00) 100%
+    rgba(226, 194, 112, 0.90) 18%,
+    rgba(130, 100, 40,  0.75) 40%,
+    rgba(20,  30,  55,  0.92) 70%,
+    rgba(8,   15,  28,  1.00) 100%
   );
 }
 
@@ -279,8 +284,8 @@ html, body {
 .nav-logo-name {
   font-family: var(--font-display);
   font-size: 1.05rem;
-  font-weight: var(--font-weight-light);
-  letter-spacing: var(--letter-spacing-wide);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: var(--letter-spacing-cinzel-title);
   color: var(--cfs-text-primary);
   line-height: 1;
 }
@@ -454,11 +459,11 @@ html, body {
 .tcfsc-hero-title {
   font-family: var(--font-display);
   font-size: var(--font-size-hero);
-  font-weight: var(--font-weight-light);
+  font-weight: 600;
   line-height: var(--line-height-tight);
   color: var(--cfs-text-primary);
   margin-bottom: var(--space-md);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--letter-spacing-cinzel-title);
 }
 
 .tcfsc-hero-sub {
@@ -502,15 +507,15 @@ html, body {
 .section-heading {
   font-family: var(--font-display);
   font-size: var(--font-size-h1);
-  font-weight: var(--font-weight-light);
+  font-weight: var(--font-weight-regular);
   line-height: var(--line-height-tight);
   color: var(--cfs-text-primary);
   margin-bottom: var(--space-md);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--letter-spacing-cinzel-sub);
 }
 
 .section-body {
-  font-family: var(--font-body);
+  font-family: var(--font-editorial);
   font-size: var(--font-size-body);
   font-weight: var(--font-weight-light);
   line-height: var(--line-height-loose);
@@ -601,6 +606,7 @@ html, body {
   font-family: var(--font-display);
   font-size: var(--font-size-h3);
   font-weight: var(--font-weight-regular);
+  letter-spacing: var(--letter-spacing-cinzel-sub);
   color: var(--cfs-text-primary);
   margin-bottom: 0.25rem;
 }
@@ -646,6 +652,7 @@ html, body {
   font-family: var(--font-display);
   font-size: var(--font-size-h3);
   font-weight: var(--font-weight-regular);
+  letter-spacing: var(--letter-spacing-cinzel-sub);
   color: var(--cfs-text-primary);
   margin-bottom: 0.3rem;
 }
@@ -799,8 +806,8 @@ html, body {
 .footer-brand-name {
   font-family: var(--font-display);
   font-size: 1.3rem;
-  font-weight: var(--font-weight-light);
-  letter-spacing: var(--letter-spacing-wide);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: var(--letter-spacing-cinzel-title);
   color: var(--cfs-text-primary);
   margin-bottom: var(--space-xs);
 }
@@ -887,10 +894,9 @@ html, body {
 #mission {
   background: linear-gradient(
     to bottom,
-    #ffffff         0%,
-    #f0ede7         5%,
-    var(--cfs-navy-light) 22%,
-    var(--cfs-navy) 50%
+    #080f1c                0%,
+    var(--cfs-navy-light) 12%,
+    var(--cfs-navy)       50%
   );
   padding: var(--space-3xl) var(--space-md) var(--space-3xl);
   text-align: center;
@@ -904,10 +910,10 @@ html, body {
 .mission-heading {
   font-family: var(--font-display);
   font-size: clamp(2.4rem, 5vw, 4.2rem);
-  font-weight: var(--font-weight-light);
+  font-weight: 600;
   line-height: 1.15;
   color: var(--cfs-text-primary);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--letter-spacing-cinzel-sub);
   margin-bottom: var(--space-xl);
 }
 
@@ -919,7 +925,7 @@ html, body {
 }
 
 .mission-body {
-  font-family: var(--font-body);
+  font-family: var(--font-editorial);
   font-size: var(--font-size-body);
   font-weight: var(--font-weight-light);
   line-height: var(--line-height-loose);
@@ -960,7 +966,7 @@ html, body {
 
 .pillar-number {
   display: block;
-  font-family: var(--font-display);
+  font-family: var(--font-editorial);
   font-size: var(--font-size-h3);
   font-weight: var(--font-weight-light);
   color: var(--cfs-gold);
@@ -972,10 +978,10 @@ html, body {
 .pillar-title {
   font-family: var(--font-display);
   font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-light);
+  font-weight: var(--font-weight-regular);
   color: var(--cfs-text-primary);
   line-height: var(--line-height-tight);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--letter-spacing-cinzel-sub);
   margin-bottom: var(--space-sm);
 }
 
@@ -1046,10 +1052,10 @@ html, body {
 .initiative-title {
   font-family: var(--font-display);
   font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-light);
+  font-weight: var(--font-weight-regular);
   color: var(--cfs-text-primary);
   line-height: var(--line-height-tight);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--letter-spacing-cinzel-sub);
 }
 
 .initiative-desc {
@@ -1110,7 +1116,7 @@ html, body {
 }
 
 .vision-statement {
-  font-family: var(--font-display);
+  font-family: var(--font-editorial);
   font-size: clamp(1.8rem, 3.5vw, 3rem);
   font-weight: var(--font-weight-light);
   line-height: 1.3;
@@ -1220,5 +1226,16 @@ html, body {
 @media (max-width: 600px) {
   .initiative-card {
     padding: var(--space-md);
+  }
+}
+
+/* Cinzel tracking: tighten on small screens to prevent overflow */
+@media (max-width: 480px) {
+  .mission-heading,
+  .section-heading,
+  .tcfsc-hero-title,
+  .pillar-title,
+  .initiative-title {
+    letter-spacing: 0.04em;
   }
 }
