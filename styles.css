@@ -83,19 +83,12 @@ html, body {
   background: var(--navy-deep);
 }
 
-/* ── Space background — Ken Burns layer ── */
-#space-bg {
+/* ── Star canvas — animated starfield background ── */
+#space-canvas {
   position: absolute;
-  inset: -6%;           /* overflow allows drift without edge gaps */
-  background: url('assets/space-bg.png') 50% 30% / cover no-repeat;
-  animation: kenburns 40s ease-in-out infinite alternate;
-  will-change: transform;
+  inset: 0;
+  display: block;
   z-index: 0;
-}
-
-@keyframes kenburns {
-  0%   { transform: scale(1.00) translate(0%,    0%)    rotate(0deg);    }
-  100% { transform: scale(1.08) translate(-1.8%, 1.2%)  rotate(1.8deg);  }
 }
 
 /* ── Space vignette: darkens edges, keeps focus on center ── */
