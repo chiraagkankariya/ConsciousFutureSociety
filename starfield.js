@@ -21,6 +21,7 @@
     H = canvas.height = window.innerHeight;
   }
   window.addEventListener('resize', resize);
+  resize(); // must run before makeStar() so W/H are set
 
   // ── Mouse tracking ──
   document.addEventListener('mousemove', e => {
@@ -133,7 +134,6 @@
     raf = requestAnimationFrame(draw);
   }
 
-  resize();
   draw();
 
   window.addEventListener('unload', () => cancelAnimationFrame(raf));
