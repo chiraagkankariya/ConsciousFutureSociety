@@ -92,30 +92,23 @@ html, body {
   height: 100%;
   object-fit: cover;
   z-index: 0;
-  filter: brightness(0.65) saturate(0.75) hue-rotate(-15deg);
+  filter: brightness(0.72) saturate(1.1) hue-rotate(-20deg);
 }
 
-/* ── Dark navy overlay — sits above video, below all UI ── */
+/* ── Navy gradient overlay — tints toward deep navy without killing star colors ── */
 #bg-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(5, 8, 20, 0.4);
+  background: linear-gradient(
+    135deg,
+    rgba(8, 12, 28, 0.55) 0%,
+    rgba(5, 8,  20, 0.35) 50%,
+    rgba(8, 12, 28, 0.55) 100%
+  );
   z-index: 1;
-  pointer-events: none;
-}
-
-/* ── Watermark cover — matches darkest video corner ── */
-#bg-watermark-cover {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  width: 120px;
-  height: 80px;
-  background: #050814;
-  z-index: 2;
   pointer-events: none;
 }
 
