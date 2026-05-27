@@ -7,9 +7,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=15">
+  <link rel="stylesheet" href="styles.css?v=29">
 </head>
 <body>
+
+  <!-- Fixed full-viewport video background — lives outside #hero so it is never clipped -->
+  <video id="space-video" autoplay muted loop playsinline>
+    <source src="assets/space-bg-final.mp4" type="video/mp4">
+  </video>
 
   <nav id="cfs-nav">
     <a href="index.html" class="nav-logo">
@@ -30,7 +35,6 @@
   <section id="hero">
     <!-- Depth layers (back to front) -->
     <canvas id="space-canvas"></canvas>
-    <div id="space-vignette"></div>
     <div id="ambient-glow"></div>
 
     <!-- Beings -->
@@ -44,9 +48,6 @@
       <img class="being" id="clone-4"  src="assets/being.png" alt="">
       <img class="being" id="clone-5"  src="assets/being.png" alt="">
     </div>
-
-    <!-- Covers screen with light at animation end, transitions to next section -->
-    <div id="light-veil"></div>
   </section>
 
   <!-- ── Mission ── -->
@@ -229,6 +230,6 @@
   <script src="starfield.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="script.js?v=9"></script>
+  <script src="script.js?v=10"></script>
 </body>
 </html>

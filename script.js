@@ -56,15 +56,6 @@ const master = gsap.timeline({
   },
 });
 
-// ── Ambient glow: gold halo grows from center ──
-master.to('#ambient-glow', {
-  opacity: 0.9,
-  width:   '120vw',
-  height:  '60vw',
-  ease:    'power2.in',
-  duration: 10,
-}, 0);
-
 // ── Original: descends smoothly, vertical only ──
 master.to('#original', {
   y:    '10vh',
@@ -102,21 +93,7 @@ addClone('#clone-4', '-11vh', '-22vh', 1.0, 3,   7);
 // Clone 5 — separates at t=8
 addClone('#clone-5', '-19vh', '-26vh', 0.8, 2,   8);
 
-// ── Clone 5 radiant ramp: extreme brightness at full illumination ──
-master.to('#clone-5', {
-  filter: 'brightness(6) drop-shadow(0 0 90px rgba(226,194,112,1)) drop-shadow(0 0 160px rgba(201,155,60,0.65))',
-  ease:     'power2.in',
-  duration: 1,
-}, 9);
-
-// ── Light veil: gold-to-white sweep, becomes transition point ──
-master.to('#light-veil', {
-  opacity:  1,
-  ease:     'power2.in',
-  duration: 1,
-}, 9);
-
-// ── Buffer: 1-unit empty hold at full illumination ──
+// ── Buffer: 1-unit empty hold at animation end ──
 // Ensures scrub (0.8s lag) fully settles before pin releases.
 // At end=+=5000 with total duration 11: buffer = ~454px of extra scroll.
 master.to({}, { duration: 1 });
@@ -135,61 +112,61 @@ const ST = (trigger, startOffset = '80%') => ({
 
 // ── Mission ──
 gsap.from('.mission-heading', {
-  opacity: 0, y: 40, duration: 1.0, ease: 'power3.out',
+  opacity: 0, y: 40, duration: 1.25, ease: 'power3.out',
   scrollTrigger: ST('.mission-heading'),
 });
 gsap.from('.mission-divider > *', {
-  opacity: 0, y: 32, duration: 0.9, ease: 'power3.out',
+  opacity: 0, y: 32, duration: 1.1, ease: 'power3.out',
   stagger: 0.16, delay: 0.15,
   scrollTrigger: ST('.mission-divider'),
 });
 
 // ── Philosophy ──
 gsap.from('#philosophy .section-eyebrow, #philosophy .section-heading', {
-  opacity: 0, y: 28, duration: 0.85, ease: 'power3.out', stagger: 0.12,
+  opacity: 0, y: 28, duration: 1.05, ease: 'power3.out', stagger: 0.12,
   scrollTrigger: ST('#philosophy'),
 });
 gsap.from('.pillar', {
-  opacity: 0, y: 44, duration: 0.95, ease: 'power3.out', stagger: 0.13,
+  opacity: 0, y: 44, duration: 1.2, ease: 'power3.out', stagger: 0.13,
   scrollTrigger: ST('.pillars-grid'),
 });
 
 // ── Initiatives ──
 gsap.from('#initiatives .gold-rule, #initiatives .section-eyebrow, #initiatives .section-heading', {
-  opacity: 0, y: 28, duration: 0.85, ease: 'power3.out', stagger: 0.12,
+  opacity: 0, y: 28, duration: 1.05, ease: 'power3.out', stagger: 0.12,
   scrollTrigger: ST('#initiatives'),
 });
 gsap.from('.initiative-card', {
-  opacity: 0, y: 48, duration: 1.0, ease: 'power3.out', stagger: 0.15,
+  opacity: 0, y: 48, duration: 1.25, ease: 'power3.out', stagger: 0.15,
   scrollTrigger: ST('.initiatives-grid'),
 });
 
 // ── Vision ──
 gsap.from('#vision .section-eyebrow', {
-  opacity: 0, y: 20, duration: 0.7, ease: 'power3.out',
+  opacity: 0, y: 20, duration: 0.9, ease: 'power3.out',
   scrollTrigger: ST('#vision'),
 });
 gsap.from('.vision-statement', {
-  opacity: 0, y: 52, duration: 1.1, ease: 'power3.out', delay: 0.12,
+  opacity: 0, y: 52, duration: 1.4, ease: 'power3.out', delay: 0.12,
   scrollTrigger: ST('#vision'),
 });
 gsap.from('.vision-body .section-body', {
-  opacity: 0, y: 28, duration: 0.9, ease: 'power3.out',
+  opacity: 0, y: 28, duration: 1.1, ease: 'power3.out',
   stagger: 0.18, delay: 0.3,
   scrollTrigger: ST('.vision-statement', '75%'),
 });
 
 // ── Involvement ──
 gsap.from('#involvement .section-eyebrow, #involvement .section-heading, #involvement .section-body', {
-  opacity: 0, y: 32, duration: 0.9, ease: 'power3.out', stagger: 0.14,
+  opacity: 0, y: 32, duration: 1.1, ease: 'power3.out', stagger: 0.14,
   scrollTrigger: ST('#involvement'),
 });
 gsap.from('.involvement-ctas', {
-  opacity: 0, y: 24, duration: 0.8, ease: 'power3.out', delay: 0.35,
+  opacity: 0, y: 24, duration: 1.0, ease: 'power3.out', delay: 0.35,
   scrollTrigger: ST('#involvement', '70%'),
 });
 gsap.from('.involvement-note', {
-  opacity: 0, y: 16, duration: 0.7, ease: 'power3.out', delay: 0.5,
+  opacity: 0, y: 16, duration: 0.9, ease: 'power3.out', delay: 0.5,
   scrollTrigger: ST('#involvement', '70%'),
 });
 
