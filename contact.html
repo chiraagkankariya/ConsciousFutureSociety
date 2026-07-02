@@ -126,9 +126,8 @@
         Whether you're looking to get involved, explore a partnership, or simply learn more — we'd love to hear from you.
       </p>
 
-      <form class="contact-form" action="https://formspree.io/f/xykqbwzq" method="post">
+      <form id="contact-form" class="contact-form">
         <input type="hidden" name="_subject" value="New inquiry — theconsciousfuturesociety.com">
-        <input type="hidden" name="_next" value="https://theconsciousfuturesociety.com/thankyou.html">
         <div class="contact-field">
           <label for="contact-name">Full Name</label>
           <input type="text" id="contact-name" name="name" required>
@@ -155,6 +154,9 @@
           <textarea id="contact-message" name="message" rows="6"></textarea>
         </div>
         <button type="submit" class="btn-gold">Send Message</button>
+        <p id="contact-error" role="alert" style="display: none; text-align: center; color: var(--cfs-gold); font-family: var(--font-body); font-size: var(--font-size-small); margin-top: var(--space-sm);">
+          Something went wrong. Please email us directly at <a href="mailto:hello@theconsciousfuturesociety.com" style="color: var(--cfs-gold); text-decoration: underline;">hello@theconsciousfuturesociety.com</a>
+        </p>
       </form>
     </div>
   </section>
@@ -204,5 +206,36 @@
   </footer>
 
   <script src="nav.js?v=1"></script>
+  <script>
+    (function () {
+      const form = document.getElementById('contact-form');
+      const errorEl = document.getElementById('contact-error');
+      if (!form) return;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorEl.style.display = 'none';
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalLabel = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending…';
+
+        try {
+          const res = await fetch('https://formspree.io/f/xykqbwzq', {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' },
+            body: new FormData(form),
+          });
+          if (!res.ok) throw new Error('Formspree returned ' + res.status);
+          window.location.href = 'thankyou.html';
+        } catch (err) {
+          errorEl.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalLabel;
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
