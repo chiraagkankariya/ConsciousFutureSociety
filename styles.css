@@ -922,6 +922,7 @@ html, body {
   color: var(--cfs-text-secondary);
   max-width: 640px;
   margin: 0 auto;
+  text-shadow: 0 1px 8px rgba(5, 8, 20, 0.92);
 }
 
 
@@ -970,7 +971,7 @@ html, body {
   font-family: var(--font-display);
   font-size: var(--font-size-h2);
   font-weight: var(--font-weight-regular);
-  color: var(--cfs-text-primary);
+  color: rgba(255, 255, 255, 1);
   line-height: var(--line-height-tight);
   letter-spacing: var(--letter-spacing-cinzel-sub);
   margin-bottom: var(--space-sm);
@@ -978,10 +979,11 @@ html, body {
 
 .pillar-body {
   font-family: var(--font-body);
-  font-size: var(--font-size-small);
+  font-size: calc(var(--font-size-small) * 1.15);
   font-weight: var(--font-weight-light);
-  color: var(--cfs-text-secondary);
+  color: rgba(255, 255, 255, 0.75);
   line-height: var(--line-height-loose);
+  text-shadow: 0 1px 10px rgba(5, 8, 20, 0.95);
 }
 
 
