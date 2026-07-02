@@ -58,7 +58,7 @@ const master = gsap.timeline({
 
 // ── Original: descends smoothly, vertical only ──
 master.to('#original', {
-  y:    '10vh',
+  y:    '2vh',
   ease: 'power2.inOut',
   duration: 10,
 }, 0);

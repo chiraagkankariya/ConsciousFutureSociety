@@ -1120,7 +1120,7 @@ html, body {
 }
 
 #vision .section-eyebrow {
-  font-size: 1.1rem;
+  font-size: 1.86rem;
 }
 
 
@@ -1140,6 +1140,10 @@ html, body {
   margin: 0 auto;
 }
 
+#involvement .section-body {
+  font-size: calc(var(--font-size-body) * 1.3);
+}
+
 .involvement-ctas {
   display: flex;
   gap: var(--space-sm);
@@ -1154,14 +1158,14 @@ html, body {
 
 .involvement-note p {
   font-family: var(--font-body);
-  font-size: var(--font-size-small);
+  font-size: calc(var(--font-size-small) * 1.3);
   color: var(--cfs-text-secondary);
   margin-bottom: var(--space-xs);
 }
 
 .involvement-email-link {
   font-family: var(--font-body);
-  font-size: var(--font-size-small);
+  font-size: calc(var(--font-size-small) * 1.3);
   color: var(--cfs-gold);
   text-decoration: none;
   opacity: 0.8;

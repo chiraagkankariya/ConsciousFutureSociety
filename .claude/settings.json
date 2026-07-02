@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"/Users/chiraagkankariya/ConsciousFuture VS-CODE\" && rm -f screenshot-*.png 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}
