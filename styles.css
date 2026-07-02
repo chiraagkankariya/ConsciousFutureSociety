@@ -97,6 +97,8 @@ html, body {
   height: 100vh;
   object-fit: cover;
   z-index: 0;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* ── Star canvas — animated star layer over video ── */
@@ -221,6 +223,56 @@ html, body {
   );
 }
 
+/* ── Scroll prompt — bottom-center hero cue, fades on scroll ── */
+#scroll-prompt {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--space-md) + 0.5rem);
+  transform: translateX(-50%);
+  z-index: 50;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity var(--duration-base) var(--ease-smooth),
+              transform var(--duration-base) var(--ease-smooth);
+}
+
+.scroll-prompt-text {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--cfs-gold);
+}
+
+.scroll-prompt-chevron-wrap {
+  display: block;
+  margin-top: 0.6rem;
+  animation: scroll-prompt-bob 2.4s var(--ease-smooth) infinite;
+}
+
+.scroll-prompt-chevron {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-right: 1.5px solid var(--cfs-gold);
+  border-bottom: 1.5px solid var(--cfs-gold);
+  transform: rotate(45deg);
+  vertical-align: top;
+}
+
+@keyframes scroll-prompt-bob {
+  0%, 100% { transform: translateY(0);   opacity: 0.65; }
+  50%      { transform: translateY(6px); opacity: 1; }
+}
+
+#scroll-prompt.is-hidden {
+  opacity: 0;
+  transform: translate(-50%, 8px);
+}
+
+
 /* ── Next section — white-to-navy for seamless brand transition ── */
 #next-section {
   height: 100vh;
@@ -252,6 +304,7 @@ html, body {
   left: 0;
   right: 0;
   z-index: 100;
+  isolation: isolate;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -310,15 +363,6 @@ html, body {
 
 .nav-links a:hover {
   color: var(--cfs-text-primary);
-}
-
-.nav-links a.nav-conference {
-  color: var(--cfs-gold);
-  opacity: 0.85;
-}
-
-.nav-links a.nav-conference:hover {
-  opacity: 1;
 }
 
 .nav-links a.nav-cta {
@@ -1044,6 +1088,12 @@ html, body {
   letter-spacing: var(--letter-spacing-cinzel-sub);
 }
 
+.initiative-title-note {
+  font-size: 0.55em;
+  font-style: italic;
+  white-space: nowrap;
+}
+
 .initiative-desc {
   font-family: var(--font-body);
   font-size: var(--font-size-small);
@@ -1186,6 +1236,51 @@ html, body {
 
 .involvement-email-link:hover {
   opacity: 1;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   4.6 — PARTNERS
+═══════════════════════════════════════════════════════════ */
+
+#partners {
+  position: relative;
+  background: transparent;
+  padding: var(--space-2xl) var(--space-md);
+  text-align: center;
+}
+
+#partners .section-eyebrow {
+  font-size: 1.87rem;
+}
+
+.partners-grid {
+  margin-top: var(--space-lg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2xl);
+  flex-wrap: wrap;
+}
+
+.partner-link {
+  display: inline-flex;
+  transition: opacity var(--duration-fast) var(--ease-smooth);
+}
+
+.partner-link:hover {
+  opacity: 0.8;
+}
+
+.partner-logo {
+  height: 190px;
+  width: auto;
+  display: block;
+}
+
+.partner-logo--asva {
+  height: 305px;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.55));
 }
 
 

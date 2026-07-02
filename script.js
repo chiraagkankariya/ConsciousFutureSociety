@@ -192,3 +192,17 @@ if (navToggle && cfsNav) {
     });
   });
 }
+
+
+// ─────────────────────────────────────────────────────────────
+// SCROLL PROMPT — hide once past ~30% of first viewport
+// ─────────────────────────────────────────────────────────────
+const scrollPrompt = document.getElementById('scroll-prompt');
+if (scrollPrompt) {
+  const update = () => {
+    const past = window.scrollY > window.innerHeight * 0.3;
+    scrollPrompt.classList.toggle('is-hidden', past);
+  };
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+}
