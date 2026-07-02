@@ -79,6 +79,7 @@ html, body {
 #hero {
   position: relative;
   height: 100vh;
+  height: 100dvh;
   background: transparent;
 }
 
@@ -95,6 +96,7 @@ html, body {
   inset: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   object-fit: cover;
   z-index: 0;
   will-change: transform;
@@ -1173,6 +1175,14 @@ html, body {
   font-size: 1.86rem;
 }
 
+@media (max-width: 768px) {
+  #vision .section-eyebrow { font-size: 1.3rem; }
+}
+
+@media (max-width: 480px) {
+  #vision .section-eyebrow { font-size: 1.1rem; }
+}
+
 .vision-body .section-body {
   font-size: calc(var(--font-size-body) * 1.25);
   color: rgba(255, 255, 255, 0.90);
@@ -1281,6 +1291,12 @@ html, body {
 .partner-logo--asva {
   height: 305px;
   filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.55));
+}
+
+@media (max-width: 640px) {
+  .partners-grid { gap: var(--space-lg); }
+  .partner-logo { height: 95px; }
+  .partner-logo--asva { height: 152px; }
 }
 
 
