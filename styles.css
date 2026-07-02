@@ -1123,6 +1123,17 @@ html, body {
   font-size: 1.86rem;
 }
 
+.vision-body .section-body {
+  font-size: calc(var(--font-size-body) * 1.25);
+  color: rgba(255, 255, 255, 0.90);
+  text-shadow: 0 1px 10px rgba(5, 8, 20, 0.95);
+}
+
+.vision-body .section-body + .section-body {
+  font-size: calc(var(--font-size-body) * 1.35);
+  color: rgba(255, 255, 255, 0.85);
+}
+
 
 /* ═══════════════════════════════════════════════════════════
    4.5 — INVOLVEMENT
