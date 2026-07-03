@@ -206,3 +206,51 @@ if (scrollPrompt) {
   window.addEventListener('scroll', update, { passive: true });
   update();
 }
+
+const loadingScreen = document.getElementById('loading-screen');
+const video = document.getElementById('space-video');
+let videoReady = false;
+let minTimePassed = false;
+
+// Lock scroll while overlay is up so the pinned hero can't be advanced early
+const prevHtmlOverflow = document.documentElement.style.overflow;
+const prevBodyOverflow = document.body.style.overflow;
+document.documentElement.style.overflow = 'hidden';
+document.body.style.overflow = 'hidden';
+function unlockScroll() {
+  document.documentElement.style.overflow = prevHtmlOverflow;
+  document.body.style.overflow = prevBodyOverflow;
+}
+
+function tryDismiss() {
+  if (videoReady && minTimePassed) {
+    video.play();
+    setTimeout(() => {
+      loadingScreen.classList.add('fade-out');
+      unlockScroll();
+      setTimeout(() => loadingScreen.remove(), 2600);
+    }, 300);
+  }
+}
+
+setTimeout(() => { minTimePassed = true; tryDismiss(); }, 1500);
+
+// Guard against the canplaythrough race: if the video is already buffered
+// enough by the time this script runs (warm cache), the event may have
+// already fired. HAVE_ENOUGH_DATA === 4.
+if (video.readyState >= 4) {
+  videoReady = true;
+  tryDismiss();
+} else {
+  video.addEventListener('canplaythrough', () => {
+    videoReady = true;
+    tryDismiss();
+  }, { once: true });
+}
+
+// Fallback: force dismiss after 5s regardless
+setTimeout(() => {
+  loadingScreen.classList.add('fade-out');
+  unlockScroll();
+  setTimeout(() => loadingScreen.remove(), 2600);
+}, 5000);
