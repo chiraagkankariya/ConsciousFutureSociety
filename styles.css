@@ -99,8 +99,6 @@ html, body {
   height: 100dvh;
   object-fit: cover;
   z-index: 0;
-  will-change: transform;
-  transform: translateZ(0);
 }
 
 /* ── Star canvas — animated star layer over video ── */
@@ -311,9 +309,7 @@ html, body {
   align-items: center;
   justify-content: space-between;
   padding: 1.4rem 3rem;
-  background: rgba(10, 14, 26, 0.72);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(10, 14, 26, 0.92);
   border-bottom: 1px solid rgba(201, 168, 76, 0.10);
   transition: background var(--duration-base) var(--ease-smooth),
               border-color var(--duration-base) var(--ease-smooth);
@@ -1012,6 +1008,7 @@ html, body {
 .domains-ticker-wrap {
   width: 100%;
   overflow: hidden;
+  contain: paint;
   mask: linear-gradient(
     90deg,
     transparent 0%,
