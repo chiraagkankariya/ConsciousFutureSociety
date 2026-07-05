@@ -965,10 +965,11 @@ html, body {
   font-size: clamp(1.4rem, 1.8vw, 1.7rem);
   font-weight: var(--font-weight-light);
   line-height: var(--line-height-loose);
-  color: var(--cfs-text-secondary);
+  color: rgba(255, 248, 235, 0.95);
   max-width: 640px;
   margin: 0 auto;
-  text-shadow: 0 1px 8px rgba(5, 8, 20, 0.92);
+  text-shadow: 0 0 20px rgba(5, 8, 20, 0.98),
+               0 0 40px rgba(5, 8, 20, 0.85);
 }
 
 
@@ -979,57 +980,118 @@ html, body {
 #philosophy {
   position: relative;
   background: transparent;
-  padding: var(--space-xl) var(--space-md) var(--space-3xl);
+  padding: var(--space-xl) var(--space-md) 4.55rem;
 }
 
-.pillars-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+.domains-ticker-outer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.ticker-nav {
+  background: transparent;
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  color: rgba(201, 168, 76, 0.8);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.2s ease, color 0.2s ease;
+  z-index: 10;
+}
+
+.ticker-nav:hover {
+  border-color: rgba(201, 168, 76, 0.9);
+  color: rgba(201, 168, 76, 1);
+}
+
+.domains-ticker-wrap {
+  width: 100%;
+  overflow: hidden;
+  mask: linear-gradient(
+    90deg,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(
+    90deg,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  padding: var(--space-xl) 0;
+}
+
+.domains-ticker {
+  display: flex;
   gap: var(--space-lg);
-  margin-top: var(--space-xl);
+  width: max-content;
+  animation: ticker-scroll 32s linear infinite;
 }
 
-@media (max-width: 900px) {
-  .pillars-grid { grid-template-columns: repeat(2, 1fr); }
+.domains-ticker:hover {
+  animation-play-state: paused;
 }
 
-@media (max-width: 480px) {
-  .pillars-grid { grid-template-columns: 1fr; }
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-.pillar {
-  border-top: 1px solid rgba(201, 168, 76, 0.2);
-  padding-top: var(--space-md);
+.domain-ticker-card {
+  background: rgba(10, 14, 26, 0.75);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  padding: var(--space-lg);
+  width: 380px;
+  min-height: 390px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
 }
 
-.pillar-number {
-  display: block;
-  font-family: var(--font-editorial);
-  font-size: var(--font-size-h3);
-  font-weight: var(--font-weight-light);
-  color: var(--cfs-gold);
-  opacity: 0.5;
-  margin-bottom: var(--space-sm);
+.ticker-number {
+  font-family: 'Cormorant Garamond', serif;
   font-style: italic;
+  color: rgba(201, 168, 76, 0.5);
+  font-size: 1rem;
+  text-align: center;
 }
 
-.pillar-title {
-  font-family: var(--font-display);
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-regular);
-  color: rgba(255, 255, 255, 1);
-  line-height: var(--line-height-tight);
-  letter-spacing: var(--letter-spacing-cinzel-sub);
-  margin-bottom: var(--space-sm);
+.ticker-title {
+  font-family: 'Cinzel', serif;
+  color: rgba(201, 168, 76, 0.9);
+  font-size: 1.61rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  margin: 0;
+  text-align: center;
 }
 
-.pillar-body {
-  font-family: var(--font-body);
-  font-size: calc(var(--font-size-small) * 1.15);
-  font-weight: var(--font-weight-light);
-  color: rgba(255, 255, 255, 0.75);
-  line-height: var(--line-height-loose);
-  text-shadow: 0 1px 10px rgba(5, 8, 20, 0.95);
+.ticker-body {
+  font-family: 'Inter', sans-serif;
+  color: rgba(255, 248, 235, 0.75);
+  font-size: 0.94rem;
+  line-height: 1.7;
+  margin: 0;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .domain-ticker-card {
+    width: 280px;
+    padding: var(--space-md);
+  }
+  .domains-ticker {
+    animation-duration: 24s;
+  }
 }
 
 
@@ -1347,7 +1409,6 @@ html, body {
   .mission-heading,
   .section-heading,
   .tcfsc-hero-title,
-  .pillar-title,
   .initiative-title {
     letter-spacing: 0.04em;
   }

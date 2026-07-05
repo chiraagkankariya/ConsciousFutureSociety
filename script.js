@@ -126,11 +126,6 @@ gsap.from('#philosophy .section-eyebrow, #philosophy .section-heading', {
   opacity: 0, y: 28, duration: 1.05, ease: 'power3.out', stagger: 0.12,
   scrollTrigger: ST('#philosophy'),
 });
-gsap.from('.pillar', {
-  opacity: 0, y: 44, duration: 1.2, ease: 'power3.out', stagger: 0.13,
-  scrollTrigger: ST('.pillars-grid'),
-});
-
 // ── Initiatives ──
 gsap.from('#initiatives .gold-rule, #initiatives .section-eyebrow, #initiatives .section-heading', {
   opacity: 0, y: 28, duration: 1.05, ease: 'power3.out', stagger: 0.12,
@@ -254,3 +249,61 @@ setTimeout(() => {
   unlockScroll();
   setTimeout(() => loadingScreen.remove(), 2600);
 }, 5000);
+
+const ticker = document.getElementById('domains-ticker');
+const cardWidth = 380 + 32; // card width + gap
+let currentX = 0;
+let resumeTimer = null;
+
+function halfTrack() {
+  return ticker.scrollWidth / 2;
+}
+
+function wrapX(x) {
+  const w = halfTrack();
+  const m = x % w;
+  return m > 0 ? m - w : m;
+}
+
+function pauseTicker() {
+  const matrix = window.getComputedStyle(ticker).transform;
+  if (matrix && matrix !== 'none') {
+    const values = matrix.match(/matrix.*\((.+)\)/)[1].split(', ');
+    currentX = parseFloat(values[4]) || 0;
+  }
+  currentX = wrapX(currentX);
+  ticker.style.animation = 'none';
+  ticker.style.transform = `translateX(${currentX}px)`;
+  ticker.style.transition = 'transform 0.5s ease';
+}
+
+function resumeTicker() {
+  const progress = -currentX / halfTrack();
+  const delay = -progress * 32;
+  ticker.style.transition = 'none';
+  ticker.style.transform = '';
+  ticker.style.animation = 'none';
+  void ticker.offsetWidth;
+  ticker.style.animation = `ticker-scroll 32s linear ${delay}s infinite`;
+}
+
+function scheduleResume() {
+  clearTimeout(resumeTimer);
+  resumeTimer = setTimeout(resumeTicker, 3000);
+}
+
+document.querySelector('.ticker-nav--prev').addEventListener('click', () => {
+  pauseTicker();
+  const next = currentX + cardWidth;
+  currentX = (next > 0 || next <= -halfTrack()) ? 0 : next;
+  ticker.style.transform = `translateX(${currentX}px)`;
+  scheduleResume();
+});
+
+document.querySelector('.ticker-nav--next').addEventListener('click', () => {
+  pauseTicker();
+  const next = currentX - cardWidth;
+  currentX = (next > 0 || next <= -halfTrack()) ? 0 : next;
+  ticker.style.transform = `translateX(${currentX}px)`;
+  scheduleResume();
+});
