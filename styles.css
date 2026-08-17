@@ -2044,3 +2044,443 @@ html, body {
   from { opacity: 0; transform: scale(0.97); }
   to { opacity: 1; transform: scale(1); }
 }
+
+
+/* ═══════════════════════════════════════════════════════════
+   MASS MEDITATION EVENT (mass-meditation-event.html)
+═══════════════════════════════════════════════════════════ */
+
+/* Full-page space video background (fixed) + navy overlay */
+.mme-hero-video {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.mme-hero-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(10, 14, 26, 0.65) 0%, rgba(10, 14, 26, 0.72) 100%);
+}
+
+/* Hero — no local bg; sits above the fixed overlay */
+#mme-hero {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-xl) var(--space-md);
+  background: transparent;
+}
+
+#mme-hero .tcfsc-hero-inner { position: relative; z-index: 2; }
+
+.mme-hero-date {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-cinzel-title);
+  color: var(--cfs-gold);
+  margin-bottom: var(--space-sm);
+  line-height: var(--line-height-tight);
+}
+
+@media (max-width: 768px) {
+  #mme-hero { min-height: 80vh; min-height: 80dvh; padding: var(--space-lg) var(--space-md); }
+}
+
+/* Shared section wrapper for MME page — transparent so video shows through */
+.mme-section {
+  padding: var(--space-2xl) var(--space-md);
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}
+
+/* Subtle darkening for alternating sections; keeps video visible */
+.mme-section--dark { background: rgba(10, 14, 26, 0.35); }
+
+/* Ceremonial section-boundary ornament — thin gold line + centered diamond
+   Rendered at the top edge of every .mme-section, so it sits AT the boundary
+   between the previous section and this one. */
+.mme-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  max-width: 60%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(201, 168, 76, 0.4) 22%,
+    rgba(201, 168, 76, 0.4) 78%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.mme-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: var(--cfs-gold);
+  box-shadow: 0 0 12px rgba(201, 168, 76, 0.5);
+  pointer-events: none;
+}
+
+/* Footer sits above the fixed overlay on this page */
+.page-mme #cfs-footer { position: relative; z-index: 2; }
+
+/* Ornament above the footer too, echoing the section boundaries */
+.page-mme #cfs-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  max-width: 60%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(201, 168, 76, 0.4) 22%,
+    rgba(201, 168, 76, 0.4) 78%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.page-mme #cfs-footer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: var(--cfs-gold);
+  box-shadow: 0 0 12px rgba(201, 168, 76, 0.5);
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .mme-section { padding: var(--space-xl) var(--space-md); }
+}
+
+/* Card primitive reused by How-It-Works + Lineages */
+.mme-card {
+  position: relative;
+  padding: var(--space-lg) var(--space-md);
+  background:
+    linear-gradient(180deg, rgba(17, 29, 53, 0.55) 0%, rgba(13, 21, 38, 0.4) 100%);
+  border: 1px solid transparent;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 14px 34px -22px rgba(0, 0, 0, 0.7);
+  transition:
+    transform var(--duration-base) var(--ease-smooth),
+    box-shadow var(--duration-base) var(--ease-smooth);
+}
+
+/* Thin gold-gradient border via masked pseudo-element */
+.mme-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(201, 168, 76, 0.55) 0%,
+    rgba(201, 168, 76, 0.12) 45%,
+    rgba(201, 168, 76, 0.25) 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  transition: opacity var(--duration-base) var(--ease-smooth);
+}
+
+.mme-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 1px 0 rgba(201, 168, 76, 0.18),
+    0 0 44px -8px rgba(201, 168, 76, 0.22),
+    0 22px 44px -22px rgba(0, 0, 0, 0.75);
+}
+
+.mme-card--compact { padding: var(--space-md); }
+
+.mme-card-step {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--cfs-gold);
+  margin-bottom: var(--space-sm);
+}
+
+.mme-card-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: var(--letter-spacing-cinzel-sub);
+  color: var(--cfs-text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.mme-card-body {
+  font-family: var(--font-editorial);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-light);
+  line-height: var(--line-height-loose);
+  color: var(--cfs-text-secondary);
+}
+
+/* How It Works — 2 col */
+.how-it-works-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+  max-width: 900px;
+}
+
+/* Lineages — 4 col → 2 col → 1 col */
+.lineages-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+}
+
+@media (max-width: 900px) {
+  .lineages-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .how-it-works-grid,
+  .lineages-grid { grid-template-columns: 1fr; }
+}
+
+/* Teachers — 3 col → 2 col → 1 col */
+.teachers-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg) var(--space-md);
+  margin-top: var(--space-xl);
+}
+
+@media (max-width: 900px) {
+  .teachers-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .teachers-grid { grid-template-columns: 1fr; }
+}
+
+.teacher-card {
+  text-align: center;
+  padding: var(--space-md) var(--space-sm);
+}
+
+/* Circular avatar — swap the inner <span> for an <img> when photos arrive */
+.teacher-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  margin: 0 auto var(--space-md);
+  background:
+    radial-gradient(circle at 32% 28%,
+      rgba(232, 201, 122, 0.55) 0%,
+      rgba(201, 168, 76, 0.28) 32%,
+      rgba(17, 29, 53, 0.92) 78%,
+      var(--cfs-navy) 100%);
+  border: 1px solid var(--cfs-gold);
+  box-shadow:
+    0 0 0 1px rgba(201, 168, 76, 0.12),
+    0 0 44px -6px rgba(201, 168, 76, 0.32),
+    inset 0 0 22px rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.teacher-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.teacher-avatar span {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  letter-spacing: var(--letter-spacing-cinzel-title);
+  color: var(--cfs-text-primary);
+  text-shadow: 0 0 14px rgba(201, 168, 76, 0.5);
+}
+
+.teacher-name {
+  font-family: var(--font-display);
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: var(--letter-spacing-cinzel-sub);
+  color: var(--cfs-text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.teacher-bio {
+  font-family: var(--font-editorial);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-light);
+  line-height: var(--line-height-base);
+  color: var(--cfs-text-secondary);
+  max-width: 34ch;
+  margin: 0 auto;
+}
+
+/* Partners — logo grid w/ captions + engraved row divider */
+.mme-partners-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: var(--space-2xl);
+  row-gap: var(--space-2xl);
+  margin: var(--space-xl) auto 0;
+  max-width: 1000px;
+  align-items: end;
+  justify-items: center;
+}
+
+@media (max-width: 900px) {
+  .mme-partners-grid {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: var(--space-xl);
+    row-gap: var(--space-xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .mme-partners-grid {
+    grid-template-columns: 1fr;
+    row-gap: var(--space-lg);
+  }
+}
+
+.mme-partner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  border: none;
+  background: transparent;
+}
+
+.mme-partner-logo {
+  height: 96px;
+  width: auto;
+  max-width: 220px;
+  object-fit: contain;
+  display: block;
+  transition: filter var(--duration-base) var(--ease-smooth), transform var(--duration-base) var(--ease-smooth);
+}
+
+.mme-partner:hover .mme-partner-logo {
+  filter: drop-shadow(0 0 12px rgba(201, 168, 76, 0.35));
+  transform: translateY(-2px);
+}
+
+.mme-partner-logo--asva { height: 140px; filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.55)); }
+
+/* Placeholder blocks — borderless, subtle gold glyph on gradient wash */
+.mme-partner-logo-placeholder {
+  height: 96px;
+  width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, rgba(201, 168, 76, 0.06) 0%, transparent 70%);
+}
+
+.mme-partner-logo-placeholder span {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--cfs-gold);
+  letter-spacing: var(--letter-spacing-cinzel-title);
+  opacity: 0.7;
+  text-shadow: 0 0 10px rgba(201, 168, 76, 0.25);
+}
+
+.mme-partner-caption {
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--cfs-text-secondary);
+  text-align: center;
+}
+
+/* Engraved divider between the two partner rows: line + centered diamond */
+.mme-partners-divider {
+  grid-column: 1 / -1;
+  position: relative;
+  height: 1px;
+  margin: var(--space-md) 0;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(201, 168, 76, 0.35) 18%,
+    rgba(201, 168, 76, 0.35) 82%,
+    transparent 100%
+  );
+}
+
+.mme-partners-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: var(--cfs-gold);
+  box-shadow: 0 0 12px rgba(201, 168, 76, 0.45);
+}
+
+/* Luma embed wrapper */
+.mme-embed {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.mme-embed iframe {
+  display: block;
+  width: 100%;
+  min-height: 520px;
+}
+
+@media (max-width: 600px) {
+  .mme-embed iframe { min-height: 640px; }
+}
+
