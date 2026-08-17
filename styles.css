@@ -2264,10 +2264,10 @@ html, body {
   max-width: 900px;
 }
 
-/* Lineages — 4 col → 2 col → 1 col */
+/* Lineages — 3 col → 2 col → 1 col */
 .lineages-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-md);
   margin-top: var(--space-xl);
 }
