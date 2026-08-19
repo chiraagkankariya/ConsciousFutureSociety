@@ -1,5 +1,9 @@
 gsap.registerPlugin(ScrollTrigger);
 
+// Deep-link: if URL has a #hash matching a real section, skip the hero pin
+// and the loading screen so the anchor lands where the user expects.
+const deepLinkTarget = location.hash && document.querySelector(location.hash);
+
 // ─────────────────────────────────────────────────────────────
 // IDLE FLOAT — two offset loops create organic drift
 // Animates #float-anchor (wrapper), leaving scroll props on
@@ -46,7 +50,8 @@ gsap.set('.being', { xPercent: -50, yPercent: -50 });
 gsap.set(['#clone-1', '#clone-2', '#clone-3', '#clone-4', '#clone-5'], { opacity: 0 });
 
 const master = gsap.timeline({
-  scrollTrigger: {
+  paused: !!deepLinkTarget,
+  scrollTrigger: deepLinkTarget ? undefined : {
     trigger: '#hero',
     start:   'top top',
     end:     '+=5000',   // longer scroll = full anim completes before pin releases
@@ -204,51 +209,59 @@ if (scrollPrompt) {
 
 const loadingScreen = document.getElementById('loading-screen');
 const video = document.getElementById('space-video');
-let videoReady = false;
-let minTimePassed = false;
 
-// Lock scroll while overlay is up so the pinned hero can't be advanced early
-const prevHtmlOverflow = document.documentElement.style.overflow;
-const prevBodyOverflow = document.body.style.overflow;
-document.documentElement.style.overflow = 'hidden';
-document.body.style.overflow = 'hidden';
-function unlockScroll() {
-  document.documentElement.style.overflow = prevHtmlOverflow;
-  document.body.style.overflow = prevBodyOverflow;
-}
-
-function tryDismiss() {
-  if (videoReady && minTimePassed) {
-    video.play();
-    setTimeout(() => {
-      loadingScreen.classList.add('fade-out');
-      unlockScroll();
-      setTimeout(() => loadingScreen.remove(), 2600);
-    }, 300);
-  }
-}
-
-setTimeout(() => { minTimePassed = true; tryDismiss(); }, 1500);
-
-// Guard against the canplaythrough race: if the video is already buffered
-// enough by the time this script runs (warm cache), the event may have
-// already fired. HAVE_ENOUGH_DATA === 4.
-if (video.readyState >= 4) {
-  videoReady = true;
-  tryDismiss();
+if (deepLinkTarget) {
+  // Deep-link: skip loading overlay and jump straight to the target section.
+  loadingScreen.remove();
+  video.play().catch(() => {});
+  requestAnimationFrame(() => deepLinkTarget.scrollIntoView());
 } else {
-  video.addEventListener('canplaythrough', () => {
+  let videoReady = false;
+  let minTimePassed = false;
+
+  // Lock scroll while overlay is up so the pinned hero can't be advanced early
+  const prevHtmlOverflow = document.documentElement.style.overflow;
+  const prevBodyOverflow = document.body.style.overflow;
+  document.documentElement.style.overflow = 'hidden';
+  document.body.style.overflow = 'hidden';
+  function unlockScroll() {
+    document.documentElement.style.overflow = prevHtmlOverflow;
+    document.body.style.overflow = prevBodyOverflow;
+  }
+
+  function tryDismiss() {
+    if (videoReady && minTimePassed) {
+      video.play();
+      setTimeout(() => {
+        loadingScreen.classList.add('fade-out');
+        unlockScroll();
+        setTimeout(() => loadingScreen.remove(), 2600);
+      }, 300);
+    }
+  }
+
+  setTimeout(() => { minTimePassed = true; tryDismiss(); }, 1500);
+
+  // Guard against the canplaythrough race: if the video is already buffered
+  // enough by the time this script runs (warm cache), the event may have
+  // already fired. HAVE_ENOUGH_DATA === 4.
+  if (video.readyState >= 4) {
     videoReady = true;
     tryDismiss();
-  }, { once: true });
-}
+  } else {
+    video.addEventListener('canplaythrough', () => {
+      videoReady = true;
+      tryDismiss();
+    }, { once: true });
+  }
 
-// Fallback: force dismiss after 5s regardless
-setTimeout(() => {
-  loadingScreen.classList.add('fade-out');
-  unlockScroll();
-  setTimeout(() => loadingScreen.remove(), 2600);
-}, 5000);
+  // Fallback: force dismiss after 5s regardless
+  setTimeout(() => {
+    loadingScreen.classList.add('fade-out');
+    unlockScroll();
+    setTimeout(() => loadingScreen.remove(), 2600);
+  }, 5000);
+}
 
 const ticker = document.getElementById('domains-ticker');
 const cardWidth = 380 + 32; // card width + gap
