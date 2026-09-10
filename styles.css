@@ -2367,7 +2367,7 @@ html, body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   column-gap: var(--space-2xl);
-  row-gap: var(--space-2xl);
+  row-gap: var(--space-lg);
   margin: var(--space-xl) auto 0;
   max-width: 1000px;
   align-items: end;
