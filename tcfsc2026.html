@@ -2,15 +2,138 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="theme-color" content="#0a0e1a">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <title>TCFSC 2026 — The Conscious Future Society Conference</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=11">
+  <link rel="stylesheet" href="styles.css?v=48">
+  <link rel="stylesheet" href="linesidebar.css">
+  <style>
+    #tcfsc-sidebar {
+      position: fixed;
+      left: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 20;
+      pointer-events: auto;
+    }
+    @media (max-width: 1100px) {
+      #tcfsc-sidebar { display: none; }
+    }
+
+    /* ── Page-wide Galaxy background ── */
+    #tcfsc-page-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: var(--cfs-navy);
+    }
+
+    .galaxy-canvas {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Mobile / portrait fallback — WebGL skipped; static gold-radial fills. */
+    @media (max-aspect-ratio: 4/5), (max-width: 600px) {
+      #tcfsc-page-bg {
+        background:
+          radial-gradient(ellipse 90% 55% at 50% 28%,
+            rgba(201, 168, 76, 0.22) 0%,
+            rgba(201, 168, 76, 0.08) 35%,
+            transparent 70%),
+          linear-gradient(to bottom, var(--cfs-navy) 0%, var(--cfs-navy-mid) 100%);
+      }
+    }
+
+    /* Lift content sections above the fixed bg (nav + sidebar keep their higher z-index) */
+    #tcfsc-hero,
+    #tcfsc-gallery,
+    #tcfsc-speakers,
+    #tcfsc-why,
+    #tcfsc-schedule,
+    #tcfsc-sponsors,
+    #tcfsc-donate,
+    #cfs-footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Strip opaque bg on all sections — galaxy visible page-wide.
+       Readability on content (speaker cards, logos, cards) relies on each
+       element's own backdrop (.speaker-card-front/back, .cfs-card, etc). */
+    #tcfsc-hero,
+    #tcfsc-gallery,
+    #tcfsc-speakers,
+    #tcfsc-why,
+    #tcfsc-sponsors,
+    #tcfsc-donate {
+      background: transparent;
+    }
+
+    /* Deleted hero-overlay div earlier; nuke the orphan CSS so nothing darkens the hero */
+    .tcfsc-hero--image .tcfsc-hero-overlay { display: none; }
+
+    /* Speaker card fronts: lock to opaque navy so bios + photos stay crisp over galaxy */
+    #tcfsc-speakers .speaker-card-front {
+      background: rgba(10, 14, 26, 0.92);
+    }
+
+    /* Harmonize Sponsors padding to the same rhythm as sibling sections */
+    #tcfsc-sponsors { padding: var(--space-2xl) var(--space-md); }
+
+    /* Kill the stray cool-blue radial that fought the warm-gold galaxy */
+    #tcfsc-hero::before { display: none; }
+
+    /* Reading backdrops on long-prose blocks — galaxy stays visible at ~65% */
+    .schedule-list,
+    .why-columns-2up {
+      background: rgba(10, 14, 26, 0.35);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      padding: var(--space-md);
+    }
+
+    /* Gallery scroll affordance — right-edge chevron so visitors know to scroll */
+    #tcfsc-gallery .gallery-marquee { position: relative; }
+    #tcfsc-gallery .gallery-marquee::after {
+      content: '›';
+      position: absolute;
+      right: calc(var(--space-md) + 4px);
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--font-display);
+      font-size: 2rem;
+      line-height: 1;
+      color: var(--cfs-gold-text);
+      opacity: 0.7;
+      pointer-events: none;
+      text-shadow: 0 1px 10px rgba(5, 8, 20, 0.8);
+      animation: gallery-chevron-nudge 2.2s var(--ease-smooth) infinite;
+    }
+    @keyframes gallery-chevron-nudge {
+      0%, 60%, 100% { transform: translate(0, -50%); opacity: 0.7; }
+      30% { transform: translate(5px, -50%); opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #tcfsc-gallery .gallery-marquee::after { animation: none; }
+    }
+  </style>
 </head>
 <body class="page-tcfsc">
+
+  <!-- Fixed full-page Galaxy background (sits behind all content) -->
+  <div id="tcfsc-page-bg" aria-hidden="true"></div>
+
+  <!-- Section-scroll sidebar (desktop ≥1100px) -->
+  <div id="tcfsc-sidebar"></div>
 
   <!-- Navigation -->
   <nav id="cfs-nav">
@@ -30,23 +153,66 @@
   </nav>
 
 
-  <!-- ── Conference Hero ── -->
+  <!-- ── Conference Hero (Galaxy shows through from #tcfsc-page-bg) ── -->
   <section id="tcfsc-hero" class="tcfsc-hero--image">
-    <div class="tcfsc-hero-bg" aria-hidden="true"></div>
-    <div class="tcfsc-hero-overlay" aria-hidden="true"></div>
     <div class="tcfsc-hero-inner">
-      <span class="tcfsc-date-tag">April 25, 2026 · 9AM – 5PM · Boston, MA</span>
-      <h1 class="tcfsc-hero-title">The Conscious Future<br>Society Conference</h1>
+      <h1 class="tcfsc-hero-title">The Conscious Future Society<br>Conference</h1>
       <p class="tcfsc-hero-sub">
-        A gathering at the edge of consciousness, science, and civilisational possibility.
-        One day. Transformative ideas. Lasting community.
+        The April 2026 edition brought together 22&nbsp;speakers and 110&nbsp;attendees
+        for one day at the edge of consciousness, science, and civilizational possibility.
       </p>
       <p class="tcfsc-hero-location">
-        Nonprofit Center · 89 South St, Boston, MA 02111
+        April 25, 2026 · Nonprofit Center, Boston
       </p>
       <div class="tcfsc-hero-ctas">
-        <a href="#tcfsc-sponsors" class="btn-outline">Become a Partner</a>
+        <a href="contact.html?inquiry=partnership" class="btn-gold">Partner With Us for 2027</a>
         <a href="#tcfsc-donate" class="btn-outline">Donate</a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── Gallery ── -->
+  <section id="tcfsc-gallery">
+    <div class="tcfsc-gallery-intro">
+      <div class="gold-rule"></div>
+      <p class="section-eyebrow">Gallery</p>
+      <h2 class="section-heading">Moments from<br>TCFSC 2026</h2>
+    </div>
+    <div class="gallery-marquee" aria-label="Photo gallery from prior gatherings">
+      <div class="gallery-track">
+        <div class="gallery-tile"><img src="assets/gallery/tcfsc-01.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile"><img src="assets/gallery/tcfsc-02.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile"><img src="assets/gallery/tcfsc-03.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile"><img src="assets/gallery/tcfsc-04.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile"><img src="assets/gallery/tcfsc-05.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile"><img src="assets/gallery/tcfsc-06.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile"><img src="assets/gallery/tcfsc-07.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile"><img src="assets/gallery/tcfsc-08.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile"><img src="assets/gallery/tcfsc-09.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile"><img src="assets/gallery/tcfsc-10.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile"><img src="assets/gallery/tcfsc-11.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile"><img src="assets/gallery/tcfsc-12.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile"><img src="assets/gallery/tcfsc-13.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile"><img src="assets/gallery/tcfsc-14.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile"><img src="assets/gallery/tcfsc-15.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile"><img src="assets/gallery/tcfsc-16.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile" aria-hidden="true"><img src="assets/gallery/tcfsc-01.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile" aria-hidden="true"><img src="assets/gallery/tcfsc-02.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile" aria-hidden="true"><img src="assets/gallery/tcfsc-03.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile" aria-hidden="true"><img src="assets/gallery/tcfsc-04.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile" aria-hidden="true"><img src="assets/gallery/tcfsc-05.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile" aria-hidden="true"><img src="assets/gallery/tcfsc-06.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile" aria-hidden="true"><img src="assets/gallery/tcfsc-07.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile" aria-hidden="true"><img src="assets/gallery/tcfsc-08.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile" aria-hidden="true"><img src="assets/gallery/tcfsc-09.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile" aria-hidden="true"><img src="assets/gallery/tcfsc-10.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile" aria-hidden="true"><img src="assets/gallery/tcfsc-11.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile" aria-hidden="true"><img src="assets/gallery/tcfsc-12.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile" aria-hidden="true"><img src="assets/gallery/tcfsc-13.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile" aria-hidden="true"><img src="assets/gallery/tcfsc-14.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile" aria-hidden="true"><img src="assets/gallery/tcfsc-15.jpg" alt="" width="192" height="192" loading="lazy"></div>
+        <div class="gallery-tile" aria-hidden="true"><img src="assets/gallery/tcfsc-16.jpg" alt="" width="192" height="192" loading="lazy"></div>
       </div>
     </div>
   </section>
@@ -59,7 +225,7 @@
       <p class="section-eyebrow">Speakers</p>
       <h2 class="section-heading">Voices That Matter</h2>
       <p class="section-body speakers-lede">
-        Tap any card to read more. Weekly reveals continue — follow us to be the first to know.
+        The 22-speaker roster from April 25, 2026. Tap or click any card to read their bio.
       </p>
 
       <div class="speakers-carousel" data-speakers-carousel>
@@ -75,15 +241,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/bala-subramaniam.png" alt="Photo of Dr. Bala Subramaniam" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/bala-subramaniam.png" alt="Photo of Dr. Bala Subramaniam" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-name">Dr. Bala Subramaniam</p>
                 <p class="speaker-title">Director, Sadhguru Center for a Conscious Planet · Harvard University</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Dr. Bala Subramaniam</p>
                 <p class="speaker-bio">His work investigates the intersection of consciousness, meditation, and human performance. Through interdisciplinary research and dialogue, he explores how contemplative practices influence cognition, health, and leadership.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -91,15 +257,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/jagpreet-chhatwal.png" alt="Photo of Dr. Jagpreet Chhatwal" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/jagpreet-chhatwal.png" alt="Photo of Dr. Jagpreet Chhatwal" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-name">Dr. Jagpreet Chhatwal</p>
-                <p class="speaker-title">Director, MGH Institute for Technology Assessment · Faculty, Harvard Medical School &amp; MGH Meditation Research Program</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <p class="speaker-title">Director, MGH Institute for Technology Assessment · Harvard Medical School</p>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Dr. Jagpreet Chhatwal</p>
                 <p class="speaker-bio">His research uses advanced neuroimaging and computational methods to understand how brain networks change across aging and neurological disease. His work helps uncover the mechanisms underlying cognitive decline and resilience in the human brain.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -107,15 +273,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/sara-lazar.jpeg" alt="Photo of Dr. Sara Lazar" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/sara-lazar.jpeg" alt="Photo of Dr. Sara Lazar" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-name">Dr. Sara Lazar</p>
                 <p class="speaker-title">Neuroscientist · Harvard Medical School &amp; Massachusetts General Hospital</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Dr. Sara Lazar</p>
                 <p class="speaker-bio">Her research examines how meditation affects brain structure and function. Her studies have helped reveal how contemplative practices influence attention, emotional balance, and mental well-being.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -123,15 +289,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/swami-tyagananda.jpg" alt="Photo of Swami Tyagananda" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/swami-tyagananda.jpg" alt="Photo of Swami Tyagananda" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-name">Swami Tyagananda</p>
                 <p class="speaker-title">Hindu Chaplain, MIT &amp; Harvard · Ramakrishna Order monk · Author of 14 books</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Swami Tyagananda</p>
                 <p class="speaker-bio">His work explores Vedanta philosophy and its relevance to modern life, focusing on the relationship between consciousness, ethics, and inner development. He helps bridge ancient spiritual wisdom with contemporary intellectual inquiry.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -139,15 +305,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/neha-lohia.png" alt="Photo of Neha Lohia" loading="lazy" style="object-position: center 1%;"></div>
+                <div class="speaker-photo"><img src="assets/speakers/neha-lohia.png" alt="Photo of Neha Lohia" width="84" height="84" loading="lazy" style="object-position: center 1%;"></div>
                 <p class="speaker-name">Neha Lohia</p>
                 <p class="speaker-title">Conscious Filmmaker · Former AVP, Sony Pictures</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Neha Lohia</p>
                 <p class="speaker-bio">A conscious filmmaker and former AVP at Sony Pictures who uses the power of storytelling to elevate awareness and inspire transformative change through media.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -155,15 +321,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/kunal-sood.jpg" alt="Photo of Kunal Sood" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/kunal-sood.jpg" alt="Photo of Kunal Sood" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-name">Kunal Sood</p>
                 <p class="speaker-title">Founder, AudacityAI &amp; We The Planet · Former Chief Impact Officer, Chopra Foundation</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Kunal Sood</p>
                 <p class="speaker-bio">His work mobilizes global communities to tackle social and environmental challenges through innovation and collaboration. Through We The Planet, he connects entrepreneurs, creatives, and changemakers to build solutions for a more sustainable future.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -171,15 +337,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/nidhi-pandya.jpg" alt="Photo of Nidhi Pandya" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/nidhi-pandya.jpg" alt="Photo of Nidhi Pandya" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-name">Nidhi Pandya</p>
                 <p class="speaker-title">Certified Ayurvedic Teacher · Founder, Inner Climate Framework · Author, Your Body Already Knows</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Nidhi Pandya</p>
                 <p class="speaker-bio">Her work centers on translating Ayurvedic wisdom into practical tools for modern living. Through teaching and writing, she explores how daily rhythms, food, and lifestyle practices can help restore balance between body, mind, and environment.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -187,15 +353,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/gabe-montague.jpeg" alt="Photo of Gabe Montague" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/gabe-montague.jpeg" alt="Photo of Gabe Montague" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-name">Gabe Montague</p>
-                <p class="speaker-title">Co-Founder, Mindful Makers</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <p class="speaker-title">Co-Founder, MIT Mindful Makers</p>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Gabe Montague</p>
-                <p class="speaker-bio">Co-Founder of MIT Mindful Makers, cultivating a community that integrates mindfulness practices with innovation and creative problem-solving at MIT.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <p class="speaker-bio">Co-Founder of MIT Mindful Makers, cultivating a community that integrates mindfulness practices with innovation and creative problem-solving.</p>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -203,15 +369,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/bryce-fuemmeler.png" alt="Photo of Bryce Fuemmeler" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/bryce-fuemmeler.png" alt="Photo of Bryce Fuemmeler" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-name">Bryce Fuemmeler</p>
                 <p class="speaker-title">Senior Research Associate, Leadership &amp; Happiness Lab · Harvard Kennedy School</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Bryce Fuemmeler</p>
                 <p class="speaker-bio">His research focuses on how behavioral, social, and environmental factors influence health outcomes across the lifespan. His work integrates psychology, public health, and data science to better understand how lifestyle and environment shape long-term well-being.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -219,15 +385,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/manas-ram.jpg" alt="Photo of Manas Ram" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/manas-ram.jpg" alt="Photo of Manas Ram" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-name">Manas Ram</p>
                 <p class="speaker-title">Executive Coach, Public Speaker &amp; Meditation Instructor</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Manas Ram</p>
                 <p class="speaker-bio">Speaker at the UN, Harvard, MIT and more, he is empowering leaders to unlock their potential through mindfulness and conscious living.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -235,15 +401,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/krish-bhatia.jpeg" alt="Photo of Krish Bhatia" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/krish-bhatia.jpeg" alt="Photo of Krish Bhatia" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-name">Krish Bhatia</p>
                 <p class="speaker-title">Founder, BobbyBrowser &amp; DAM Accelerator</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Krish Bhatia</p>
                 <p class="speaker-bio">A serial entrepreneur building at the intersection of technology and conscious innovation, founding BobbyBrowser and the DAM Accelerator to empower creators and digital asset communities.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -251,15 +417,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/preeta-banerjee.jpg" alt="Photo of Preeta Banerjee" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/preeta-banerjee.jpg" alt="Photo of Preeta Banerjee" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-name">Preeta Banerjee</p>
                 <p class="speaker-title">Hindu Chaplain, Tufts University · Founder, Banerjee Innovation Studios · PhD, Wharton</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Preeta Banerjee</p>
                 <p class="speaker-bio">A Hindu Chaplain and founder of Banerjee Innovation Studios, blending spiritual guidance with creative innovation to foster meaningful impact.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -267,15 +433,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/baruti-kmt-sisouvong.jpeg" alt="Photo of Dr. Baruti KMT-Sisouvong" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/baruti-kmt-sisouvong.jpeg" alt="Photo of Dr. Baruti KMT-Sisouvong" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-name">Dr. Baruti KMT-Sisouvong</p>
                 <p class="speaker-title">Director, Cambridge Transcendental Meditation · PhD Vedic Science</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Dr. Baruti KMT-Sisouvong</p>
                 <p class="speaker-bio">His work focuses on the application of meditation and consciousness-based practices to improve mental clarity, creativity, and well-being. Through teaching and community engagement, he helps bring contemplative practices into everyday life.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -283,15 +449,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/eva-selhub.png" alt="Photo of Dr. Eva Selhub" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/eva-selhub.png" alt="Photo of Dr. Eva Selhub" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-name">Dr. Eva Selhub</p>
                 <p class="speaker-title">Former Instructor, Harvard Medical School · Former Medical Director, Benson Henry Institute for Mind-Body Medicine, MGH</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Dr. Eva Selhub</p>
                 <p class="speaker-bio">A pioneering physician and resilience expert, she blends cutting-edge neuroscience with spiritual wisdom to help individuals and organizations achieve inner and outer harmonization. Former Harvard Medical School faculty for 20 years, she empowers leaders to turn challenges into profound insights.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -299,15 +465,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/keshava-swami.jpg" alt="Photo of S.B. Keshava Swami" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/keshava-swami.jpg" alt="Photo of S.B. Keshava Swami" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-name">S.B. Keshava Swami</p>
                 <p class="speaker-title">Spiritual Author &amp; Teacher · Founder, School of Bhakti · Co-Founder, Think Gita</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">S.B. Keshava Swami</p>
                 <p class="speaker-bio">A devoted spiritual author and teacher, he shares timeless wisdom through his writings and teachings, guiding seekers toward deeper self-awareness, inner fulfillment, and a life of purpose and service.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -315,15 +481,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/sadhviji.jpg" alt="Photo of Sadhvi Bhagwati Saraswati" loading="lazy" style="object-position: center 20%;"></div>
+                <div class="speaker-photo"><img src="assets/speakers/sadhviji.jpg" alt="Photo of Sadhvi Bhagwati Saraswati" width="84" height="84" loading="lazy" style="object-position: center 20%;"></div>
                 <p class="speaker-name">Sadhvi Bhagwati Saraswati, PhD</p>
                 <p class="speaker-title">International Director, Parmarth Niketan Ashram · Stanford graduate · Author, Hollywood to the Himalayas</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Sadhvi Bhagwati Saraswati, PhD</p>
                 <p class="speaker-bio">A globally recognized spiritual leader, she inspires millions through her teachings on inner peace, environmental stewardship, and the integration of ancient wisdom with modern purpose for a more compassionate world.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -331,15 +497,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/sarmad-khan.jpg" alt="Photo of Sarmad Khan" loading="lazy" style="object-position: left center;"></div>
+                <div class="speaker-photo"><img src="assets/speakers/sarmad-khan.jpg" alt="Photo of Sarmad Khan" width="84" height="84" loading="lazy" style="object-position: left center;"></div>
                 <p class="speaker-name">Sarmad Khan</p>
                 <p class="speaker-title">Founder, TelosFuture · Senior Fellow, Center for Global Affairs, New York University</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Sarmad Khan</p>
                 <p class="speaker-bio">A visionary leader and founder of TelosFuture, drawing on his experience at the UN Leadership Branch to bridge global governance, innovation, and conscious leadership for a more purposeful future.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -347,15 +513,15 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/colin-beavan.png" alt="Photo of Colin Beavan" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/colin-beavan.png" alt="Photo of Colin Beavan" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-name">Colin Beavan</p>
                 <p class="speaker-title">Author, No Impact Man · Filmmaker · Certified Zen Teacher</p>
-                <span class="speaker-flip-cue">Tap to learn more</span>
+                <span class="speaker-flip-cue">Tap or click to learn more</span>
               </div>
               <div class="speaker-card-back">
                 <p class="speaker-name">Colin Beavan</p>
                 <p class="speaker-bio">Author, filmmaker, and PhD coach whose work explores how authentic, purposeful living creates personal and societal transformation. Known for No Impact Man, he has spoken internationally, been translated into 20 languages, and is authorized as a Zen teacher.</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -363,7 +529,7 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/cindy-klein-marmer.png" alt="Photo of Cindy Klein Marmer" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/cindy-klein-marmer.png" alt="Photo of Cindy Klein Marmer" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-role">Moderator · Panel 1</p>
                 <p class="speaker-name">Cindy Klein Marmer</p>
                 <p class="speaker-title">Executive Director, Arthur M. Blank Center for Entrepreneurship · Babson College</p>
@@ -371,7 +537,7 @@
               <div class="speaker-card-back">
                 <p class="speaker-name">Cindy Klein Marmer</p>
                 <p class="speaker-bio">Executive Director of the Arthur M. Blank Center for Entrepreneurship at Babson College, where she leads programs and initiatives that help students and alumni build ventures with purpose and impact. · Moderator — Panel 1</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -379,7 +545,7 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/rohan-piple.png" alt="Photo of Rohan Piple" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/rohan-piple.png" alt="Photo of Rohan Piple" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-role">Moderator · Panel 2</p>
                 <p class="speaker-name">Rohan Piple</p>
                 <p class="speaker-title">Founder, AŠVA · Behavioral Health Specialist &amp; Certified YOI Coach</p>
@@ -387,7 +553,7 @@
               <div class="speaker-card-back">
                 <p class="speaker-name">Rohan Piple</p>
                 <p class="speaker-bio">Founder of AŠVA & former collegiate basketball player who bridges behavioral health and athletic performance through evidence-based meditation, breath work, and body mechanics. · Moderator — Panel 2</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -395,7 +561,7 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/katie-sol.png" alt="Photo of Katie Sol" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/katie-sol.png" alt="Photo of Katie Sol" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-role">Moderator · Panel 3</p>
                 <p class="speaker-name">Katie Sol</p>
                 <p class="speaker-title">Founder, Mystical Living® &amp; Cercèlle · Speaker &amp; Lightweaving Designer</p>
@@ -403,7 +569,7 @@
               <div class="speaker-card-back">
                 <p class="speaker-name">Katie Sol</p>
                 <p class="speaker-bio">Former Fortune 100 executive turned keynote speaker and founder of Mystical Living®, whose work explores peace as a learnable skill and the intersection of conscious leadership, high-frequency style, and inner transformation. · Moderator — Panel 3</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -411,7 +577,7 @@
           <article class="speaker-card" data-flip-card>
             <div class="speaker-card-inner">
               <div class="speaker-card-front">
-                <div class="speaker-photo"><img src="assets/speakers/emily-levy.png" alt="Photo of Emily Levy" loading="lazy"></div>
+                <div class="speaker-photo"><img src="assets/speakers/emily-levy.png" alt="Photo of Emily Levy" width="84" height="84" loading="lazy"></div>
                 <p class="speaker-role">Moderator · Panel 4</p>
                 <p class="speaker-name">Emily Levy</p>
                 <p class="speaker-title">Founder, Shepherd · Intuitive Leadership Advisor · Cartier Women's Initiative Fellow</p>
@@ -419,7 +585,7 @@
               <div class="speaker-card-back">
                 <p class="speaker-name">Emily Levy</p>
                 <p class="speaker-bio">Keynote speaker, intuitive guide, and co-founder of Mighty Well; honored by the Cartier Women's Initiative, she integrates ancient wisdom with modern leadership through her advisory practice Shepherd: Spirit Led Advisory. · Moderator — Panel 4</p>
-                <span class="speaker-flip-cue">Tap to flip back</span>
+                <span class="speaker-flip-cue">Tap or click to flip back</span>
               </div>
             </div>
           </article>
@@ -431,59 +597,6 @@
     </div>
   </section>
 
-  <!-- ── About the Conference ── -->
-  <section id="tcfsc-about">
-    <div class="tcfsc-section">
-      <div class="gold-rule"></div>
-      <p class="section-eyebrow">About TCFSC 2026</p>
-      <h2 class="section-heading">Ancient Wisdom,<br>Modern Application</h2>
-      <p class="section-body about-lede">
-        An interdisciplinary gathering at the intersection of contemplative practice,
-        scientific inquiry, and social innovation — bringing together five distinct
-        voices in service of a single conversation.
-      </p>
-
-      <div class="disciplines-grid">
-        <div class="discipline-card">
-          <p class="discipline-label">Scientists &amp;<br>Researchers</p>
-          <p class="discipline-desc">
-            Bringing empirical rigor to the study of consciousness, well-being,
-            and contemplative practices.
-          </p>
-        </div>
-        <div class="discipline-card">
-          <p class="discipline-label">Monks &amp;<br>Spiritual Leaders</p>
-          <p class="discipline-desc">
-            Offering millennia of contemplative wisdom and inner exploration
-            to enrich modern discourse.
-          </p>
-        </div>
-        <div class="discipline-card">
-          <p class="discipline-label">Founders &amp;<br>Entrepreneurs</p>
-          <p class="discipline-desc">
-            Translating insight into scalable impact through conscious innovation
-            and social enterprise.
-          </p>
-        </div>
-        <div class="discipline-card">
-          <p class="discipline-label">Students &amp;<br>Thought Leaders</p>
-          <p class="discipline-desc">
-            Carrying the dialogue forward with fresh perspectives and
-            cross-generational energy.
-          </p>
-        </div>
-        <div class="discipline-card">
-          <p class="discipline-label">Professors &amp;<br>Chaplains</p>
-          <p class="discipline-desc">
-            Bridging academic scholarship and pastoral care to foster
-            interdisciplinary understanding.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
   <!-- ── Why It Matters ── -->
   <section id="tcfsc-why">
     <div class="section-inner">
@@ -493,79 +606,46 @@
         <div class="gold-rule" style="margin-left:auto;margin-right:auto;"></div>
       </div>
 
-      <div class="why-columns">
-        <h3 class="why-col-heading">The Human Context</h3>
-        <h3 class="why-col-heading">From Inner Growth to Societal Impact</h3>
-      </div>
+      <div class="why-columns-2up">
+        <section class="why-column">
+          <h3 class="why-column-heading">The Human Context</h3>
+          <article class="why-item">
+            <h4 class="why-item-title">Inner Disconnection in a Hyper-Connected World</h4>
+            <p class="why-item-body">Digital acceleration is reshaping how we think and focus, often outwardly. Rebalancing inner awareness is essential for healthy individuals and societies.</p>
+          </article>
+          <article class="why-item">
+            <h4 class="why-item-title">The Mental Health &amp; Meaning Crisis</h4>
+            <p class="why-item-body">Rising anxiety and loneliness highlight a deeper need for purpose, connection, and psychological resilience.</p>
+          </article>
+          <article class="why-item">
+            <h4 class="why-item-title">Leadership Without Inner Grounding</h4>
+            <p class="why-item-body">Technical expertise alone is insufficient — ethical and emotionally intelligent leadership is increasingly critical.</p>
+          </article>
+          <article class="why-item">
+            <h4 class="why-item-title">Progress Without Conscious Direction</h4>
+            <p class="why-item-body">Innovation without reflective intention risks unintended societal and environmental consequences.</p>
+          </article>
+        </section>
 
-      <div class="why-rows">
-        <div class="why-row">
-          <div class="why-card">
-            <h4 class="why-card-title">Inner Disconnection in a Hyper-Connected World</h4>
-            <p class="why-card-desc">
-              Digital acceleration is reshaping how we think and focus, often outwardly.
-              Rebalancing inner awareness is essential for healthy individuals and societies.
-            </p>
-          </div>
-          <div class="why-card">
-            <h4 class="why-card-title">Inner Development as Foundation</h4>
-            <p class="why-card-desc">
-              Contemplative practices cultivate clarity and self-awareness — the basis
-              for responsible action.
-            </p>
-          </div>
-        </div>
-
-        <div class="why-row">
-          <div class="why-card">
-            <h4 class="why-card-title">The Mental Health &amp; Meaning Crisis</h4>
-            <p class="why-card-desc">
-              Rising anxiety and loneliness highlight a deeper need for purpose,
-              connection, and psychological resilience.
-            </p>
-          </div>
-          <div class="why-card">
-            <h4 class="why-card-title">Conscious Leadership &amp; Ethical Innovation</h4>
-            <p class="why-card-desc">
-              Awareness-driven leadership can shape more sustainable business, policy,
-              and technological ecosystems.
-            </p>
-          </div>
-        </div>
-
-        <div class="why-row">
-          <div class="why-card">
-            <h4 class="why-card-title">Leadership Without Inner Grounding</h4>
-            <p class="why-card-desc">
-              Technical expertise alone is insufficient — ethical and emotionally
-              intelligent leadership is increasingly critical.
-            </p>
-          </div>
-          <div class="why-card">
-            <h4 class="why-card-title">Interdisciplinary Collaboration</h4>
-            <p class="why-card-desc">
-              Complex challenges require integration across science, spirituality,
-              entrepreneurship, and education.
-            </p>
-          </div>
-        </div>
-
-        <div class="why-row">
-          <div class="why-card">
-            <h4 class="why-card-title">Progress Without Conscious Direction</h4>
-            <p class="why-card-desc">
-              Innovation without reflective intention risks unintended societal
-              and environmental consequences.
-            </p>
-          </div>
-          <div class="why-card">
-            <h4 class="why-card-title">From Personal Growth to Collective Impact</h4>
-            <p class="why-card-desc">
-              Elevated consciousness supports ethical systems, sustainable innovation,
-              and long-term human flourishing.
-            </p>
-          </div>
-        </div>
+        <section class="why-column">
+          <h3 class="why-column-heading">Inner Growth to Societal Impact</h3>
+          <article class="why-item">
+            <h4 class="why-item-title">Inner Development as Foundation</h4>
+            <p class="why-item-body">Contemplative practices cultivate clarity and self-awareness — the basis for responsible action.</p>
+          </article>
+          <article class="why-item">
+            <h4 class="why-item-title">Conscious Leadership &amp; Ethical Innovation</h4>
+            <p class="why-item-body">Awareness-driven leadership can shape more sustainable business, policy, and technological ecosystems.</p>
+          </article>
+          <article class="why-item">
+            <h4 class="why-item-title">Interdisciplinary Collaboration</h4>
+            <p class="why-item-body">Complex challenges require integration across science, spirituality, entrepreneurship, and education.</p>
+          </article>
+          <article class="why-item">
+            <h4 class="why-item-title">From Personal Growth to Collective Impact</h4>
+            <p class="why-item-body">Elevated consciousness supports ethical systems, sustainable innovation, and long-term human flourishing.</p>
+          </article>
+        </section>
       </div>
     </div>
   </section>
@@ -597,7 +677,7 @@
         <div class="schedule-item">
           <span class="schedule-time">10:00 – 10:25 AM</span>
           <div>
-            <p class="schedule-title">KEYNOTE: "The Need For A Conscious Future"</p>
+            <p class="schedule-title"><span class="schedule-tag">Keynote</span>"The Need for a Conscious Future"</p>
             <p class="schedule-desc">Kunal Sood</p>
           </div>
         </div>
@@ -613,7 +693,7 @@
         <div class="schedule-item">
           <span class="schedule-time">10:55 – 11:15 AM</span>
           <div>
-            <p class="schedule-title">"Maturation of the Ego From Selfish to Altruistic"</p>
+            <p class="schedule-title">"Maturation of the Ego from Selfish to Altruistic"</p>
             <p class="schedule-desc">Dr. Sara Lazar</p>
           </div>
         </div>
@@ -621,7 +701,7 @@
         <div class="schedule-item">
           <span class="schedule-time">11:20 AM – 12:15 PM</span>
           <div>
-            <p class="schedule-title">PANEL: "How Inner Practice Becomes Outer Impact"</p>
+            <p class="schedule-title"><span class="schedule-tag">Panel</span>"How Inner Practice Becomes Outer Impact"</p>
             <p class="schedule-desc">Gabe Montague, Sarmad Khan, Colin Beavan, Manas Ram · Mod. Cindy Klein</p>
           </div>
         </div>
@@ -629,7 +709,7 @@
         <div class="schedule-item">
           <span class="schedule-time">12:20 – 1:10 PM</span>
           <div>
-            <p class="schedule-title">PANEL: "Building a Conscious Society"</p>
+            <p class="schedule-title"><span class="schedule-tag">Panel</span>"Building a Conscious Society"</p>
             <p class="schedule-desc">Dr. Jagpreet Chhatwal, Bryce Fuemmeler, Dr. Baruti KMT-Sisouvong · Mod. Rohan Piple</p>
           </div>
         </div>
@@ -644,7 +724,7 @@
         <div class="schedule-item">
           <span class="schedule-time">2:00 – 2:50 PM</span>
           <div>
-            <p class="schedule-title">PANEL: "Why Stillness Is the Most Radical Thing You Can Do"</p>
+            <p class="schedule-title"><span class="schedule-tag">Panel</span>"Why Stillness Is the Most Radical Thing You Can Do"</p>
             <p class="schedule-desc">Manas Ram, Neha Lohia, Dr. Eva Selhub · Mod. Katie Sol</p>
           </div>
         </div>
@@ -652,7 +732,7 @@
         <div class="schedule-item">
           <span class="schedule-time">3:00 – 3:50 PM</span>
           <div>
-            <p class="schedule-title">PANEL: "Is There a Science of the Sacred?"</p>
+            <p class="schedule-title"><span class="schedule-tag">Panel</span>"Is There a Science of the Sacred?"</p>
             <p class="schedule-desc">Swami Tyagananda, Preeta Banerjee, Nidhi Pandya · Mod. Emily Levy</p>
           </div>
         </div>
@@ -685,60 +765,39 @@
   </section>
 
 
-  <!-- ── Donate / Support ── -->
-  <section id="tcfsc-donate">
-    <div class="donate-inner">
-      <div class="gold-rule" style="margin-left:auto;margin-right:auto;"></div>
-      <p class="section-eyebrow">Support This Work</p>
-      <h2 class="section-heading">Help Us Build the Conversation</h2>
-      <p class="section-body donate-lede">
-        The Conscious Future Society Conference is built on the belief that meaningful
-        conversations about consciousness, ethics, and the future deserve a dedicated space.
-      </p>
-      <p class="section-body donate-sub">
-        Your contribution helps us bring together researchers, practitioners, and
-        thought leaders — and keeps this vision moving forward.
-      </p>
-      <a href="mailto:hello@theconsciousfuturesociety.com?subject=TCFSC%202026%20Donation" class="btn-gold">Donate</a>
-      <p class="donate-footnote">Every contribution, of any size, makes a difference.</p>
-      <div class="gold-rule" style="margin-left:auto;margin-right:auto;margin-top:var(--space-md);"></div>
-    </div>
-  </section>
-
-
-  <!-- ── Sponsors & Partners ── -->
+  <!-- ── 2026 Partners (social proof: who was in the room) ── -->
   <section id="tcfsc-sponsors">
     <div class="section-inner">
-      <p class="section-eyebrow">Supporting Excellence</p>
-      <h2 class="section-heading">Sponsors &amp; Partners</h2>
+      <p class="section-eyebrow">2026 Partners</p>
+      <h2 class="section-heading">The Room<br>Had Credible Company</h2>
       <p class="section-body sponsors-lede">
-        Organizations supporting the advancement of consciousness, science, and leadership.
+        Organizations that supported the inaugural edition of TCFSC.
       </p>
 
       <div class="sponsors-field" data-sponsors-field>
         <div class="sponsor-logo" data-float-logo data-invert="true">
           <a href="https://www.intelligentchange.com/" target="_blank" rel="noopener noreferrer" aria-label="Intelligent Change">
-            <img src="assets/sponsors/intelligent-change.png" alt="Intelligent Change" loading="lazy">
+            <img src="assets/sponsors/intelligent-change.png" alt="Intelligent Change" width="751" height="91" loading="lazy">
           </a>
         </div>
         <div class="sponsor-logo" data-float-logo>
           <a href="https://choosemuse.com" target="_blank" rel="noopener noreferrer" aria-label="Muse">
-            <img src="assets/sponsors/muse.png" alt="Muse — The Brain Sensing Headband" loading="lazy">
+            <img src="assets/sponsors/muse.png" alt="Muse — The Brain Sensing Headband" width="316" height="315" loading="lazy">
           </a>
         </div>
         <div class="sponsor-logo" data-float-logo data-invert="true">
           <a href="https://apolloneuro.com" target="_blank" rel="noopener noreferrer" aria-label="Apollo Neuro">
-            <img src="assets/sponsors/apollo.png" alt="Apollo Neuro" loading="lazy">
+            <img src="assets/sponsors/apollo.png" alt="Apollo Neuro" width="1920" height="753" loading="lazy">
           </a>
         </div>
         <div class="sponsor-logo" data-float-logo>
           <a href="https://meditationartifacts.com/" target="_blank" rel="noopener noreferrer" aria-label="Meditation Artifacts">
-            <img src="assets/sponsors/meditation-artifacts.png" alt="Meditation Artifacts" loading="lazy">
+            <img src="assets/sponsors/meditation-artifacts.png" alt="Meditation Artifacts" width="500" height="500" loading="lazy">
           </a>
         </div>
         <div class="sponsor-logo" data-float-logo data-invert="true">
           <a href="https://mindfulmakers.xyz" target="_blank" rel="noopener noreferrer" aria-label="Mindful Makers">
-            <img src="assets/sponsors/mindful-makers.png" alt="Mindful Makers" loading="lazy">
+            <img src="assets/sponsors/mindful-makers.png" alt="Mindful Makers" width="1563" height="242" loading="lazy">
           </a>
         </div>
       </div>
@@ -746,35 +805,38 @@
   </section>
 
 
-  <!-- ── Event Logistics ── -->
-  <section id="tcfsc-logistics">
-    <div class="tcfsc-section">
-      <div class="gold-rule"></div>
-      <p class="section-eyebrow">Event Information</p>
-      <h2 class="section-heading">Details</h2>
+  <!-- ── Partner With Us / Donate (the ask) ── -->
+  <section id="tcfsc-donate">
+    <div class="donate-inner">
+      <div class="gold-rule" style="margin-left:auto;margin-right:auto;"></div>
+      <p class="section-eyebrow">Support the 2027 Edition</p>
+      <h2 class="section-heading">Help Build<br>the Next Conversation</h2>
+      <p class="section-body donate-lede">
+        TCFSC exists because partners and donors put their name next to
+        meaningful conversation about consciousness, ethics, and the future.
+        We'd like to invite you to the 2027 edition.
+      </p>
 
-      <div class="logistics-grid">
-
-        <div>
-          <p style="font-family: var(--font-body); font-size: var(--font-size-small); letter-spacing: var(--letter-spacing-wider); text-transform: uppercase; color: var(--cfs-gold); opacity: 0.7; margin-bottom: var(--space-xs);">Date</p>
-          <p style="font-family: var(--font-display); font-size: var(--font-size-h3); color: var(--cfs-text-primary);">April 25, 2026</p>
+      <div class="tcfsc-support-pair">
+        <div class="cfs-card cfs-card--featured">
+          <h3 class="tcfsc-support-title">Partner With Us</h3>
+          <p class="tcfsc-support-body">
+            Sponsor the 2027 edition. Share the room with researchers, founders,
+            and contemplative leaders. We'll send a short deck and talk through fit.
+          </p>
+          <a href="contact.html?inquiry=partnership" class="btn-gold">Start the Conversation</a>
         </div>
-
-        <div>
-          <p style="font-family: var(--font-body); font-size: var(--font-size-small); letter-spacing: var(--letter-spacing-wider); text-transform: uppercase; color: var(--cfs-gold); opacity: 0.7; margin-bottom: var(--space-xs);">Location</p>
-          <p style="font-family: var(--font-display); font-size: var(--font-size-h3); color: var(--cfs-text-primary);">Nonprofit Center<br>89 South St, Boston, MA 02111</p>
+        <div class="cfs-card">
+          <h3 class="tcfsc-support-title">Donate</h3>
+          <p class="tcfsc-support-body">
+            Every contribution helps us keep this work independent and bring
+            the right voices into the room, regardless of commercial backing.
+          </p>
+          <a href="mailto:hello@theconsciousfuturesociety.com?subject=TCFSC%20Donation" class="btn-outline">Donate</a>
         </div>
-
-        <div>
-          <p style="font-family: var(--font-body); font-size: var(--font-size-small); letter-spacing: var(--letter-spacing-wider); text-transform: uppercase; color: var(--cfs-gold); opacity: 0.7; margin-bottom: var(--space-xs);">Contact</p>
-          <a href="mailto:hello@theconsciousfuturesociety.com"
-             style="font-family: var(--font-body); font-size: var(--font-size-small); color: var(--cfs-text-secondary); text-decoration: none;">
-            hello@theconsciousfuturesociety.com
-          </a>
-        </div>
-
       </div>
 
+      <div class="gold-rule" style="margin-left:auto;margin-right:auto;margin-top:var(--space-lg);"></div>
     </div>
   </section>
 
@@ -792,7 +854,7 @@
         </div>
 
         <div>
-          <p class="footer-col-label">Navigate</p>
+          <h3 class="footer-col-label">Navigate</h3>
           <ul class="footer-links">
             <li><a href="index.html">Home</a></li>
             <li><a href="index.html#mission">About</a></li>
@@ -803,7 +865,7 @@
         </div>
 
         <div>
-          <p class="footer-col-label">Connect</p>
+          <h3 class="footer-col-label">Connect</h3>
           <ul class="footer-links">
             <li><a href="mailto:hello@theconsciousfuturesociety.com">Email Us</a></li>
             <li><a href="https://www.linkedin.com/company/the-conscious-future-society/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
@@ -822,7 +884,75 @@
     </div>
   </footer>
 
+  <script src="dome-gallery.js?v=1"></script>
   <script src="tcfsc.js?v=1"></script>
+  <script type="module">
+    import { createLineSidebar } from './linesidebar.js';
+    const container = document.getElementById('tcfsc-sidebar');
+    if (container && !window.matchMedia('(max-width: 1100px)').matches) {
+      const sections = [
+        { label: 'Gallery',  id: 'tcfsc-gallery'  },
+        { label: 'Speakers', id: 'tcfsc-speakers' },
+        { label: 'Why',      id: 'tcfsc-why'      },
+        { label: 'Schedule', id: 'tcfsc-schedule' },
+        { label: 'Partners', id: 'tcfsc-sponsors' },
+        { label: 'Support',  id: 'tcfsc-donate'   },
+      ];
+      const sidebar = createLineSidebar(container, {
+        items: sections.map(s => s.label),
+        accentColor: '#c9a84c',
+        textColor: 'rgba(255,255,255,0.55)',
+        markerColor: 'rgba(201,168,76,0.35)',
+        defaultActive: 0,
+        showIndex: true,
+        fontSize: 0.9,
+        itemGap: 22,
+        markerLength: 40,
+        onItemClick: (i) => {
+          document.getElementById(sections[i].id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        },
+      });
+
+      const NAV_OFFSET = 100;
+      const onScroll = () => {
+        if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 2) {
+          sidebar.setActive(sections.length - 1);
+          return;
+        }
+        let best = 0;
+        let bestDist = Infinity;
+        for (let i = 0; i < sections.length; i++) {
+          const el = document.getElementById(sections[i].id);
+          if (!el) continue;
+          const top = el.getBoundingClientRect().top - NAV_OFFSET;
+          if (top <= 0 && -top < bestDist) { best = i; bestDist = -top; }
+        }
+        sidebar.setActive(best);
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    }
+  </script>
+  <script type="module">
+    import { createGalaxy } from './galaxy.js?v=3';
+    // Full-page galaxy backdrop — mounted on #tcfsc-page-bg (fixed inset:0 z-index:0).
+    // Lighter + sparser than the old hero-scoped settings so content stays readable.
+    createGalaxy(document.getElementById('tcfsc-page-bg'), {
+      hueShift: 42,              // warm gold (brand-aligned)
+      saturation: 0.5,
+      density: 1,                // sparser than old 2.8
+      glowIntensity: 0.3,        // softer glow
+      twinkleIntensity: 0.3,
+      rotationSpeed: 0.1,
+      starSpeed: 0.5,
+      mouseInteraction: true,
+      mouseRepulsion: true,
+      repulsionStrength: 2,
+      transparent: true,
+      suspendWhenOffscreen: false, // always visible as the page bg
+      maxDpr: 1.5,
+    });
+  </script>
   <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

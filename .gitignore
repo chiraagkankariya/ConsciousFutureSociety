@@ -8,3 +8,6 @@ assets/final-tcfs-hero.mp4
 .agents/
 .claude/skills/
 skills-lock.json
+
+# Source photos (web-ready set lives in assets/gallery/)
+assets/gallery-original/
