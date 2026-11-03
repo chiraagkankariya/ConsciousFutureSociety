@@ -3,3 +3,8 @@ node_modules/
 /tmp/
 *.log
 assets/final-tcfs-hero.mp4
+
+# Harness / tooling artifacts
+.agents/
+.claude/skills/
+skills-lock.json
