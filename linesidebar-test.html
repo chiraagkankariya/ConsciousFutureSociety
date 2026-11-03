@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LineSidebar Test</title>
+  <link rel="stylesheet" href="linesidebar.css" />
+  <style>
+    html, body { margin: 0; padding: 0; background: #0a0e1a; color: #fff; font-family: system-ui, sans-serif; min-height: 100vh; }
+    .stage { display: flex; min-height: 100vh; padding: 4rem; box-sizing: border-box; }
+    .log { position: fixed; bottom: 12px; right: 12px; font-size: 12px; opacity: 0.6; }
+  </style>
+</head>
+<body>
+  <div class="stage" id="stage"></div>
+  <div class="log" id="log">click an item</div>
+
+  <script type="module">
+    import { createLineSidebar } from './linesidebar.js';
+    const log = document.getElementById('log');
+    createLineSidebar(document.getElementById('stage'), {
+      items: ['Introduction', 'Program', 'Selection', 'Ideology', 'Apply'],
+      accentColor: '#c9a84c',
+      textColor: 'rgba(255,255,255,0.55)',
+      markerColor: 'rgba(201,168,76,0.4)',
+      defaultActive: 0,
+      onItemClick: (i, label) => { log.textContent = `clicked #${i}: ${label}`; },
+    });
+  </script>
+</body>
+</html>

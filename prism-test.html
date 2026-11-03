@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prism Test</title>
+  <style>
+    html, body { margin: 0; padding: 0; background: #0a0e1a; color: #fff; font-family: system-ui, sans-serif; }
+    .stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+    .panel {
+      position: absolute; top: 12px; left: 12px; z-index: 10;
+      background: rgba(10,14,26,0.7); border: 1px solid rgba(201,168,76,0.3);
+      padding: 12px 14px; border-radius: 6px; font-size: 13px; line-height: 1.5;
+      backdrop-filter: blur(6px);
+    }
+    .panel label { display: block; margin: 4px 0; }
+    .panel input[type="range"] { width: 180px; vertical-align: middle; }
+    .panel .val { display: inline-block; width: 44px; text-align: right; color: #c9a84c; }
+    .swatch { display: inline-block; width: 14px; height: 14px; background: rgb(201,168,76); vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+  </style>
+</head>
+<body>
+  <div class="stage" id="stage"></div>
+
+  <div class="panel">
+    <div><span class="swatch"></span>Target: rgb(201, 168, 76)</div>
+    <label>hueShift <span class="val" id="v-hue">1.40</span>
+      <input id="i-hue" type="range" min="-3.14" max="3.14" step="0.05" value="1.4">
+    </label>
+    <label>colorFrequency <span class="val" id="v-cf">0.40</span>
+      <input id="i-cf" type="range" min="0" max="2" step="0.05" value="0.4">
+    </label>
+    <label>scale <span class="val" id="v-sc">3.60</span>
+      <input id="i-sc" type="range" min="1" max="8" step="0.1" value="3.6">
+    </label>
+    <label>glow <span class="val" id="v-gl">1.00</span>
+      <input id="i-gl" type="range" min="0" max="3" step="0.05" value="1">
+    </label>
+    <label>noise <span class="val" id="v-no">0.30</span>
+      <input id="i-no" type="range" min="0" max="1" step="0.05" value="0.3">
+    </label>
+  </div>
+
+  <script type="module">
+    import { createPrism } from './prism.js';
+
+    const stage = document.getElementById('stage');
+    let prism = null;
+
+    const cfg = {
+      animationType: 'rotate',
+      timeScale: 0.5,
+      height: 3.5,
+      baseWidth: 5.5,
+      scale: 3.6,
+      hueShift: 0,
+      colorFrequency: 1,
+      noise: 0.3,
+      glow: 1,
+      transparent: true,
+      tint: [1.75, 1.35, 0.65], // → rgb(204,163,75), matches brand gold rgb(201,168,76)
+    };
+
+    function mount() {
+      if (prism) prism.destroy();
+      prism = createPrism(stage, cfg);
+    }
+    mount();
+
+    const bind = (id, key, valId, parse = parseFloat) => {
+      const el = document.getElementById(id);
+      const label = document.getElementById(valId);
+      el.addEventListener('input', () => {
+        cfg[key] = parse(el.value);
+        label.textContent = Number(cfg[key]).toFixed(2);
+        mount();
+      });
+    };
+    bind('i-hue', 'hueShift', 'v-hue');
+    bind('i-cf', 'colorFrequency', 'v-cf');
+    bind('i-sc', 'scale', 'v-sc');
+    bind('i-gl', 'glow', 'v-gl');
+    bind('i-no', 'noise', 'v-no');
+  </script>
+</body>
+</html>
