@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="theme-color" content="#0a0e1a">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <title>The Conscious Future Accelerator — The Conscious Future Society</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=48">
+  <link rel="stylesheet" href="linesidebar.css">
+  <style>
+    #cfa-sidebar {
+      position: fixed;
+      left: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 20;
+      pointer-events: auto;
+    }
+    /* Hide on narrower viewports where the sidebar would overlap hero content */
+    @media (max-width: 1100px) {
+      #cfa-sidebar { display: none; }
+    }
+  </style>
+  <style>
+    /* ── Page-wide Lightfall background ── */
+    #cfa-page-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: var(--cfs-navy);
+    }
+
+    /* Lift every content section above the fixed bg (nav + sidebar stay on their own higher z) */
+    #cfa-hero,
+    #cfa-program,
+    #cfa-select,
+    #cfa-ideology,
+    #cfa-apply,
+    #cfs-footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Lightfall WebGL canvas fills #cfa-page-bg */
+    .lightfall-canvas {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Mobile / portrait fallback — WebGL skipped; a static gold-radial fills instead. */
+    @media (max-aspect-ratio: 4/5), (max-width: 600px) {
+      #cfa-page-bg {
+        background:
+          radial-gradient(ellipse 90% 55% at 50% 78%,
+            rgba(201, 168, 76, 0.35) 0%,
+            rgba(201, 168, 76, 0.12) 35%,
+            transparent 70%),
+          linear-gradient(to bottom, var(--cfs-navy) 0%, var(--cfs-navy-mid) 100%);
+      }
+    }
+
+    /* Hero sits transparent so Lightfall shows through */
+    #cfa-hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      max-height: 900px;
+      min-height: 640px;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .cfa-hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .cfa-hero-eyebrow {
+      font-family: var(--font-body);
+      font-size: var(--font-size-small);
+      font-weight: var(--font-weight-medium);
+      letter-spacing: var(--letter-spacing-wider);
+      text-transform: uppercase;
+      color: var(--cfs-gold);
+      opacity: 0.9;
+      margin-bottom: var(--space-md);
+      text-shadow: 0 1px 8px rgba(5,8,20,0.9);
+    }
+
+    .cfa-hero-title,
+    .cfa-hero-subtitle { visibility: hidden; }
+    .cfa-hero-title.is-ready,
+    .cfa-hero-subtitle.is-ready { visibility: visible; }
+
+    .cfa-hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 6vw, 5.4rem);
+      font-weight: var(--font-weight-bold);
+      line-height: 1.08;
+      color: var(--cfs-white);
+      letter-spacing: var(--letter-spacing-cinzel-sub);
+      margin: 0 auto var(--space-md);
+      max-width: min(1200px, 92vw);
+      text-align: center;
+      text-shadow:
+        0 2px 20px rgba(5, 8, 20, 0.95),
+        0 0 40px rgba(5, 8, 20, 0.75);
+    }
+
+    .cfa-hero-subtitle {
+      font-family: var(--font-editorial);
+      font-style: italic;
+      font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+      font-weight: var(--font-weight-light);
+      line-height: var(--line-height-loose);
+      color: rgba(255, 248, 235, 0.95);
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: center;
+      text-shadow:
+        0 1px 14px rgba(5, 8, 20, 0.95),
+        0 0 30px rgba(5, 8, 20, 0.85);
+    }
+
+    .cfa-hero-status {
+      font-family: var(--font-body);
+      font-size: var(--font-size-small);
+      font-weight: var(--font-weight-regular);
+      letter-spacing: 0.02em;
+      color: var(--cfs-gold-text);
+      margin: var(--space-md) auto 0;
+      text-align: center;
+      text-shadow: 0 1px 10px rgba(5, 8, 20, 0.85);
+    }
+
+    /* ── Program cards row (reuses .initiative-card look, 3-up) ── */
+    .cfa-intro-line {
+      font-family: var(--font-editorial);
+      font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+      font-weight: var(--font-weight-light);
+      font-style: italic;
+      color: rgba(255, 248, 235, 0.9);
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto var(--space-lg);
+    }
+
+    /* ── "Who We Select" bullet list ── */
+    .cfa-select-list {
+      list-style: none;
+      padding: 0;
+      margin: var(--space-lg) auto 0;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .cfa-select-list li {
+      font-family: var(--font-display);
+      font-size: clamp(1.3rem, 2vw, 1.75rem);
+      font-weight: var(--font-weight-regular);
+      color: var(--cfs-text-primary);
+      letter-spacing: var(--letter-spacing-cinzel-sub);
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+      text-align: center;
+    }
+
+    .cfa-select-list li:last-child { border-bottom: none; }
+
+    /* ── Ideology copy ── */
+    .cfa-ideology-body p {
+      font-family: var(--font-editorial);
+      font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+      font-weight: var(--font-weight-light);
+      line-height: var(--line-height-loose);
+      color: rgba(255, 248, 235, 0.9);
+      max-width: 720px;
+      margin: 0 auto var(--space-md);
+    }
+
+    /* ── Application form (mirrors contact.html) ── */
+    .cfa-form {
+      max-width: 620px;
+      margin: var(--space-lg) auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      text-align: left;
+    }
+
+    .cfa-field { display: flex; flex-direction: column; gap: var(--space-xs); }
+
+    .cfa-form label {
+      font-family: var(--font-editorial);
+      font-size: 1.05rem;
+      font-weight: var(--font-weight-regular);
+      letter-spacing: normal;
+      color: var(--cfs-gold);
+      opacity: 0.85;
+    }
+
+    #cfa-error {
+      display: none;
+      text-align: center;
+      color: var(--cfs-gold);
+      font-family: var(--font-body);
+      font-size: var(--font-size-small);
+      margin-top: var(--space-sm);
+    }
+    #cfa-error a { color: var(--cfs-gold); text-decoration: underline; }
+
+    .cfa-form input,
+    .cfa-form select,
+    .cfa-form textarea {
+      width: 100%;
+      font-family: var(--font-body);
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-light);
+      color: var(--cfs-text-primary);
+      background-color: rgba(10, 14, 26, 0.75);
+      border: 1px solid rgba(201, 168, 76, 0.15);
+      padding: 0.85rem 1rem;
+      transition: border-color var(--duration-fast) var(--ease-smooth),
+                  background-color var(--duration-fast) var(--ease-smooth);
+      box-sizing: border-box;
+    }
+
+    .cfa-form textarea {
+      min-height: 160px;
+      resize: vertical;
+      line-height: var(--line-height-base);
+    }
+
+    .cfa-form input:focus,
+    .cfa-form select:focus,
+    .cfa-form textarea:focus {
+      outline: none;
+      border-color: var(--cfs-gold);
+      background-color: rgba(10, 14, 26, 0.85);
+    }
+
+    .cfa-form select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--cfs-gold) 50%),
+        linear-gradient(135deg, var(--cfs-gold) 50%, transparent 50%);
+      background-position: calc(100% - 20px) calc(50% - 2px), calc(100% - 15px) calc(50% - 2px);
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+      padding-right: 2.5rem;
+      cursor: pointer;
+    }
+
+    .cfa-form select option {
+      background-color: var(--cfs-navy);
+      color: var(--cfs-text-primary);
+    }
+
+    .cfa-form ::placeholder {
+      color: var(--cfs-text-secondary);
+      opacity: 0.6;
+    }
+
+    .cfa-form button[type="submit"] {
+      align-self: center;
+      margin-top: var(--space-sm);
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fixed full-page Lightfall background (sits behind all content via z-index: -1) -->
+  <div id="cfa-page-bg" aria-hidden="true"></div>
+
+  <!-- Section-scroll sidebar (desktop only, hidden < 1100px via CSS) -->
+  <div id="cfa-sidebar"></div>
+
+  <!-- Navigation -->
+  <nav id="cfs-nav">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-eyebrow">The</span>
+      <span class="nav-logo-name">Conscious Future Society</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#mission">About</a></li>
+      <li><a href="index.html#initiatives">Initiatives</a></li>
+      <li><a href="tcfsc2026.html" class="nav-conference">TCFSC 2026</a></li>
+      <li><a href="index.html#involvement" class="nav-cta">Join</a></li>
+    </ul>
+    <button class="nav-mobile-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+
+  <!-- ── Hero (Lightfall shows through from #cfa-page-bg) ── -->
+  <section id="cfa-hero">
+    <div class="cfa-hero-content">
+      <h1 class="cfa-hero-title">The Conscious Future Accelerator</h1>
+      <p class="cfa-hero-subtitle">
+        In a world where economic incentive is prioritized over human wellbeing,
+        we support those who are building technology for human flourishing.
+      </p>
+      <p class="cfa-hero-status">Launching Summer 2027 · Taking expressions of interest now</p>
+    </div>
+  </section>
+
+
+  <!-- ── The Program ── -->
+  <section id="cfa-program" style="padding: var(--space-2xl) var(--space-md); background: transparent;">
+    <div class="section-inner" style="text-align: center;">
+      <div class="gold-rule" style="margin-left: auto; margin-right: auto;"></div>
+      <p class="section-eyebrow">The Program</p>
+      <h2 class="section-heading">A Cohort<br>for Conscious Founders</h2>
+      <p class="cfa-intro-line">
+        A 16-week cohort in Boston for 4–6 early-stage founders. Launching Summer 2027.
+      </p>
+
+      <div class="initiatives-grid">
+
+        <div class="initiative-card">
+          <p class="initiative-tag">Mentorship</p>
+          <h3 class="initiative-title">Rotating 1:1 Mentorship</h3>
+          <p class="initiative-desc">
+            Private sessions with each mentor across the cohort, including researchers, founders,
+            contemplative leaders, and more. Providing a spiritual, entrepreneurial, and
+            scientific perspective.
+          </p>
+        </div>
+
+        <div class="initiative-card">
+          <p class="initiative-tag">Community</p>
+          <h3 class="initiative-title">Our Community</h3>
+          <p class="initiative-desc">
+            Weekly group meditation, bi-weekly co-working sessions, two silent retreat days,
+            and community dinners/bonding. These relationships will be formed to outlast the
+            cohort, because there's strength in unity.
+          </p>
+        </div>
+
+        <div class="initiative-card">
+          <p class="initiative-tag">Demo Day</p>
+          <h3 class="initiative-title">The Finale</h3>
+          <p class="initiative-desc">
+            A closing demo day in front of VCs, angels, start-up banks and other investors
+            aligned with conscious technology, ensuring founders won't have to sacrifice
+            purpose for profit.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── Who We Select ── -->
+  <section id="cfa-select" style="padding: var(--space-2xl) var(--space-md);">
+    <div class="section-inner" style="text-align: center;">
+      <div class="gold-rule" style="margin-left: auto; margin-right: auto;"></div>
+      <p class="section-eyebrow">Who We Select</p>
+      <h2 class="section-heading">Building at<br>the Frontier</h2>
+      <p class="cfa-intro-line">Founders building within the realms of:</p>
+      <ul class="cfa-select-list">
+        <li>Meditation / Mindfulness-Tech</li>
+        <li>Consciousness &amp; Conscious Measurement</li>
+        <li>Human Well-Being &amp; Bio-Hacking</li>
+      </ul>
+    </div>
+  </section>
+
+
+  <!-- ── Our Ideology ── -->
+  <section id="cfa-ideology" style="padding: var(--space-2xl) var(--space-md); background: transparent;">
+    <div class="section-inner" style="text-align: center;">
+      <div class="gold-rule" style="margin-left: auto; margin-right: auto;"></div>
+      <p class="section-eyebrow">Our Ideology</p>
+      <h2 class="section-heading">Purpose<br>Before Profit</h2>
+      <div class="cfa-ideology-body" style="margin-top: var(--space-lg);">
+        <p>
+          We prioritize those who share our vision of building a better tomorrow, meaning that
+          purpose comes before profit. We maintain a non-zero-sum ideology — co-creation and
+          collaboration supersedes competition.
+        </p>
+        <p>
+          The Conscious Future Society began with and maintains the vision of elevating the
+          consciousness of the global population in order to foster a sustainable, ethical, and
+          humanity-driven future.
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── Application Form ── -->
+  <section id="cfa-apply" style="padding: var(--space-2xl) var(--space-md);">
+    <div class="section-inner" style="max-width: 720px; text-align: center;">
+      <div class="gold-rule" style="margin-left: auto; margin-right: auto;"></div>
+      <p class="section-eyebrow">Apply</p>
+      <h2 class="section-heading">Join the Cohort</h2>
+      <p class="section-body" style="margin: var(--space-md) auto 0; max-width: 560px;">
+        Interested in joining the inaugural cohort? Tell us about what you're building and
+        the values that guide your work.
+      </p>
+
+      <form id="cfa-form" class="cfa-form" method="POST">
+        <input type="hidden" name="_subject" value="New CFA interest — theconsciousfuturesociety.com">
+
+        <div class="cfa-field">
+          <label for="cfa-name">Name</label>
+          <input type="text" id="cfa-name" name="name" autocomplete="name" required>
+        </div>
+
+        <div class="cfa-field">
+          <label for="cfa-email">Email</label>
+          <input type="email" id="cfa-email" name="email" autocomplete="email" spellcheck="false" required>
+        </div>
+
+        <div class="cfa-field">
+          <label for="cfa-company">Company / Project Name</label>
+          <input type="text" id="cfa-company" name="company" autocomplete="organization">
+        </div>
+
+        <div class="cfa-field">
+          <label for="cfa-oneliner">One-Line Description of What You're Building</label>
+          <input type="text" id="cfa-oneliner" name="description" autocomplete="off">
+        </div>
+
+        <div class="cfa-field">
+          <label for="cfa-category">Which Category Best Fits</label>
+          <select id="cfa-category" name="category" autocomplete="off">
+            <option value="" disabled selected>Select one…</option>
+            <option value="meditation">Meditation / Mindfulness-Tech</option>
+            <option value="consciousness">Consciousness / Conscious Measurement</option>
+            <option value="wellbeing">Human Well-Being / Bio-Hacking</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="cfa-field">
+          <label for="cfa-alignment">Tell Us About Your Practice / Values Alignment</label>
+          <textarea id="cfa-alignment" name="alignment" rows="6" autocomplete="off" required></textarea>
+        </div>
+
+        <button type="submit" class="btn-gold">Register Interest</button>
+        <p id="cfa-error" role="alert">
+          Something went wrong. Please email us directly at <a href="mailto:hello@theconsciousfuturesociety.com">hello@theconsciousfuturesociety.com</a>
+        </p>
+      </form>
+    </div>
+  </section>
+
+
+  <!-- ── Footer ── -->
+  <footer id="cfs-footer">
+    <div class="footer-inner">
+      <div style="text-align: center; margin-bottom: var(--space-lg);">
+        <img src="assets/thecfs-logo.png" alt="The Conscious Future Society" width="112" height="112" style="height: 112px; width: 112px;" loading="lazy">
+      </div>
+      <div class="footer-top">
+
+        <div>
+          <p class="footer-brand-name">Conscious Future Society</p>
+          <p class="footer-brand-tagline">
+            At the intersection of consciousness, science, technology, and civilizational change.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="footer-col-label">Navigate</h3>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#mission">About</a></li>
+            <li><a href="index.html#initiatives">Initiatives</a></li>
+            <li><a href="tcfsc2026.html">TCFSC 2026</a></li>
+            <li><a href="index.html#involvement">Join</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="footer-col-label">Connect</h3>
+          <ul class="footer-links">
+            <li><a href="mailto:hello@theconsciousfuturesociety.com">Email Us</a></li>
+            <li><a href="https://www.linkedin.com/company/the-conscious-future-society/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+            <li><a href="https://www.instagram.com/consciousfuturesociety/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-legal">© 2026 The Conscious Future Society. All rights reserved.</p>
+        <p class="footer-legal">
+          <a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="#">Terms of Use</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+
+  <script src="nav.js?v=2"></script>
+  <script>
+    (function () {
+      const form = document.getElementById('cfa-form');
+      const errorEl = document.getElementById('cfa-error');
+      if (!form) return;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorEl.style.display = 'none';
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalLabel = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending…';
+
+        try {
+          const res = await fetch('https://formspree.io/f/xykqbwzq', {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' },
+            body: new FormData(form),
+          });
+          if (!res.ok) throw new Error('Formspree returned ' + res.status);
+          window.location.href = 'thankyou.html?from=cfa';
+        } catch (err) {
+          errorEl.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalLabel;
+        }
+      });
+    })();
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script>
+    // Letter-by-letter reveal for hero title + word-by-word for subtitle.
+    // Uses GSAP core only (SplitText plugin is paid — this replaces it).
+    (function () {
+      function splitIntoSpans(element, type) {
+        const text = element.textContent.trim().replace(/\s+/g, ' ');
+        element.textContent = '';
+        if (type === 'words') {
+          return text.split(' ').map((word) => {
+            const span = document.createElement('span');
+            span.textContent = word;
+            span.style.display = 'inline-block';
+            span.style.marginRight = '0.25em';
+            span.style.willChange = 'transform, opacity';
+            element.appendChild(span);
+            return span;
+          });
+        }
+
+        // chars: wrap each word in a nowrap span so words never break mid-letter
+        const charSpans = [];
+        const words = text.split(' ');
+        words.forEach((word, i) => {
+          const wordWrap = document.createElement('span');
+          wordWrap.style.display = 'inline-block';
+          wordWrap.style.whiteSpace = 'nowrap';
+          for (const ch of word) {
+            const span = document.createElement('span');
+            span.textContent = ch;
+            span.style.display = 'inline-block';
+            span.style.willChange = 'transform, opacity';
+            wordWrap.appendChild(span);
+            charSpans.push(span);
+          }
+          element.appendChild(wordWrap);
+          if (i < words.length - 1) element.appendChild(document.createTextNode(' '));
+        });
+        return charSpans;
+      }
+
+      const title = document.querySelector('.cfa-hero-title');
+      const subtitle = document.querySelector('.cfa-hero-subtitle');
+      if (!title || !subtitle || typeof gsap === 'undefined') return;
+
+      const titleSpans = splitIntoSpans(title, 'chars');
+      const subtitleSpans = splitIntoSpans(subtitle, 'words');
+      title.classList.add('is-ready');
+      subtitle.classList.add('is-ready');
+
+      const titleStagger = 0.04;
+      const titleDuration = 0.8;
+      const titleTotal = titleDuration + titleStagger * titleSpans.length;
+
+      gsap.fromTo(titleSpans,
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: titleDuration, stagger: titleStagger, ease: 'power3.out' }
+      );
+
+      gsap.fromTo(subtitleSpans,
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 0.8, stagger: 0.08, ease: 'power3.out', delay: titleTotal * 0.55 }
+      );
+    })();
+  </script>
+  <script type="module">
+    import { createLineSidebar } from './linesidebar.js';
+    const container = document.getElementById('cfa-sidebar');
+    if (container && !window.matchMedia('(max-width: 1100px)').matches) {
+      const sections = [
+        { label: 'Introduction', id: 'cfa-hero' },
+        { label: 'Program',      id: 'cfa-program' },
+        { label: 'Selection',    id: 'cfa-select' },
+        { label: 'Ideology',     id: 'cfa-ideology' },
+        { label: 'Apply',        id: 'cfa-apply' },
+      ];
+      const sidebar = createLineSidebar(container, {
+        items: sections.map(s => s.label),
+        accentColor: '#c9a84c',
+        textColor: 'rgba(255,255,255,0.55)',
+        markerColor: 'rgba(201,168,76,0.35)',
+        defaultActive: 0,
+        showIndex: true,
+        fontSize: 0.9,
+        itemGap: 22,
+        markerLength: 40,
+        onItemClick: (i) => {
+          document.getElementById(sections[i].id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        },
+      });
+
+      // Sync active item with scroll position — pick the section whose top is closest to viewport-top (with a small offset for the fixed nav).
+      const NAV_OFFSET = 100;
+      const onScroll = () => {
+        // At page bottom, force last section (guards against a short final section whose top never crosses NAV_OFFSET)
+        if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 2) {
+          sidebar.setActive(sections.length - 1);
+          return;
+        }
+        let best = 0;
+        let bestDist = Infinity;
+        for (let i = 0; i < sections.length; i++) {
+          const el = document.getElementById(sections[i].id);
+          if (!el) continue;
+          const top = el.getBoundingClientRect().top - NAV_OFFSET;
+          if (top <= 0 && -top < bestDist) { best = i; bestDist = -top; }
+        }
+        sidebar.setActive(best);
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    }
+  </script>
+
+  <script type="module">
+    import { createLightfall } from './lightfall.js';
+    // Skip the WebGL pipeline on portrait/small viewports — the CSS gold-radial
+    // fallback on #cfa-page-bg takes over via media query.
+    const isPortrait = window.matchMedia('(max-aspect-ratio: 4/5), (max-width: 600px)').matches;
+    if (!isPortrait) {
+      createLightfall(document.getElementById('cfa-page-bg'), {
+        colors: ['#dcc27a'],              // text-grade brand gold rays
+        backgroundColor: '#c9a84c',       // decorative brand gold halo at top
+        speed: 0.3,
+        streakCount: 2,
+        streakWidth: 0.8,
+        twinkle: 0.3,
+        backgroundGlow: 0.12,
+        headGlow: 0.3,                    // keep tips warm, not white-hot
+        bloom: 0.4,                       // slightly stronger bloom on the gold
+        mouseInteraction: true,
+        holdToWarp: true,
+        intro: true,
+      });
+    }
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

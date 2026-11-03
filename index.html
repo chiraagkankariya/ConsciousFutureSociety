@@ -2,22 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="theme-color" content="#0a0e1a">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <title>The Conscious Future Society</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=29">
+  <link rel="stylesheet" href="styles.css?v=48">
 </head>
 <body>
 
   <div id="loading-screen">
-    <img id="loading-logo-img" src="assets/loading-screen.png" alt="The Conscious Future Society"/>
+    <img id="loading-logo-img" src="assets/loading-screen.png" alt="The Conscious Future Society" width="2000" height="2000"/>
+    <button id="loading-skip" type="button">Skip intro</button>
   </div>
 
   <!-- Fixed full-viewport video background — lives outside #hero so it is never clipped -->
-  <video id="space-video" src="assets/tcfs-hero.mp4" autoplay muted loop playsinline preload="auto"></video>
+  <video id="space-video" src="assets/tcfs-hero.mp4" autoplay muted loop playsinline preload="metadata"></video>
 
   <nav id="cfs-nav">
     <a href="index.html" class="nav-logo">
@@ -36,6 +38,7 @@
   </nav>
 
   <section id="hero">
+    <h1 class="visually-hidden">The Conscious Future Society</h1>
     <!-- Depth layers (back to front) -->
     <canvas id="space-canvas"></canvas>
     <div id="ambient-glow"></div>
@@ -66,17 +69,13 @@
       <h2 class="mission-heading">
         Civilizational change begins with elevating human consciousness
       </h2>
-      <div class="mission-divider">
-        <div class="gold-rule"></div>
-        <p class="section-eyebrow">Our Mission</p>
-        <p class="mission-body">
-          The Conscious Future Society is a global movement for leaders, researchers,
-          and practitioners who believe positive societal change is preceded by an
-          evolution of human consciousness. Inner change leads to outer impact. We
-          convene, research, and build the infrastructure for a more aware and
-          intentional world.
-        </p>
-      </div>
+      <p class="mission-body">
+        The Conscious Future Society is a global movement for leaders, researchers,
+        and practitioners who believe positive societal change is preceded by an
+        evolution of human consciousness. Inner change leads to outer impact. We
+        convene, research, and build the infrastructure for a more aware and
+        intentional world.
+      </p>
     </div>
   </section>
 
@@ -84,66 +83,37 @@
   <!-- ── Philosophy ── -->
   <section id="philosophy">
     <div class="section-inner">
-      <p class="section-eyebrow">Our Philosophy</p>
-      <h2 class="section-heading">Four Domains.<br>One Direction.</h2>
-      <div class="domains-ticker-outer">
-        <button class="ticker-nav ticker-nav--prev" aria-label="Previous domain">&#8592;</button>
-        <div class="domains-ticker-wrap">
-          <div class="domains-ticker" id="domains-ticker">
-
-          <div class="domain-ticker-card">
-            <span class="ticker-number">I</span>
-            <h3 class="ticker-title">Consciousness</h3>
-            <p class="ticker-body">Our thesis is simple: inner change leads to outer impact. Elevating human consciousness is the prerequisite for positive societal change.</p>
+      <h2 class="section-heading section-heading--gold">Our Philosophy</h2>
+      <ol class="numbered-list">
+        <li class="numbered-list__item">
+          <span class="numbered-list__numeral">I</span>
+          <div>
+            <h3 class="numbered-list__title">Consciousness</h3>
+            <p class="numbered-list__body">Our thesis is simple: inner change leads to outer impact. Elevating human consciousness is the prerequisite for positive societal change.</p>
           </div>
-
-          <div class="domain-ticker-card">
-            <span class="ticker-number">II</span>
-            <h3 class="ticker-title">Science</h3>
-            <p class="ticker-body">Our conferences highlight cross-disciplinary dialogue and strive to bridge the gap between Eastern and Western sciences to form a holistic understanding of ourselves and the world around us.</p>
+        </li>
+        <li class="numbered-list__item">
+          <span class="numbered-list__numeral">II</span>
+          <div>
+            <h3 class="numbered-list__title">Science</h3>
+            <p class="numbered-list__body">Our conferences highlight cross-disciplinary dialogue and strive to bridge the gap between Eastern and Western sciences to form a holistic understanding of ourselves and the world around us.</p>
           </div>
-
-          <div class="domain-ticker-card">
-            <span class="ticker-number">III</span>
-            <h3 class="ticker-title">Technology</h3>
-            <p class="ticker-body">The exponential acceleration of technological advancement far exceeds the human capacity to understand its effects and regulate its processes. We educate and raise awareness on how to optimize these tools for our own well-being.</p>
+        </li>
+        <li class="numbered-list__item">
+          <span class="numbered-list__numeral">III</span>
+          <div>
+            <h3 class="numbered-list__title">Technology</h3>
+            <p class="numbered-list__body">The exponential acceleration of technological advancement far exceeds the human capacity to understand its effects and regulate its processes. We educate and raise awareness on how to optimize these tools for our own well-being.</p>
           </div>
-
-          <div class="domain-ticker-card">
-            <span class="ticker-number">IV</span>
-            <h3 class="ticker-title">Leadership</h3>
-            <p class="ticker-body">The world is shaped by those who lead. We cultivate leaders equipped to navigate complexity with clarity, wisdom, and the long view.</p>
+        </li>
+        <li class="numbered-list__item">
+          <span class="numbered-list__numeral">IV</span>
+          <div>
+            <h3 class="numbered-list__title">Leadership</h3>
+            <p class="numbered-list__body">The world is shaped by those who lead. We cultivate leaders equipped to navigate complexity with clarity, wisdom, and the long view.</p>
           </div>
-
-          <!-- Duplicate set for seamless loop -->
-          <div class="domain-ticker-card" aria-hidden="true">
-            <span class="ticker-number">I</span>
-            <h3 class="ticker-title">Consciousness</h3>
-            <p class="ticker-body">Our thesis is simple: inner change leads to outer impact. Elevating human consciousness is the prerequisite for positive societal change.</p>
-          </div>
-
-          <div class="domain-ticker-card" aria-hidden="true">
-            <span class="ticker-number">II</span>
-            <h3 class="ticker-title">Science</h3>
-            <p class="ticker-body">Our conferences highlight cross-disciplinary dialogue and strive to bridge the gap between Eastern and Western sciences to form a holistic understanding of ourselves and the world around us.</p>
-          </div>
-
-          <div class="domain-ticker-card" aria-hidden="true">
-            <span class="ticker-number">III</span>
-            <h3 class="ticker-title">Technology</h3>
-            <p class="ticker-body">The exponential acceleration of technological advancement far exceeds the human capacity to understand its effects and regulate its processes. We educate and raise awareness on how to optimize these tools for our own well-being.</p>
-          </div>
-
-          <div class="domain-ticker-card" aria-hidden="true">
-            <span class="ticker-number">IV</span>
-            <h3 class="ticker-title">Leadership</h3>
-            <p class="ticker-body">The world is shaped by those who lead. We cultivate leaders equipped to navigate complexity with clarity, wisdom, and the long view.</p>
-          </div>
-
-          </div>
-        </div>
-        <button class="ticker-nav ticker-nav--next" aria-label="Next domain">&#8594;</button>
-      </div>
+        </li>
+      </ol>
     </div>
   </section>
 
@@ -151,32 +121,43 @@
   <!-- ── Initiatives ── -->
   <section id="initiatives">
     <div class="section-inner">
-      <div class="gold-rule"></div>
-      <p class="section-eyebrow">Initiatives</p>
-      <h2 class="section-heading">Where Thinking<br>Becomes Action</h2>
+      <h2 class="section-heading section-heading--gold">Our Initiatives</h2>
       <div class="initiatives-grid">
 
-        <div class="initiative-card initiative-card--featured">
+        <div class="cfs-card cfs-card--featured">
           <p class="initiative-tag">Conference · April 2026</p>
           <h3 class="initiative-title">TCFSC 2026</h3>
           <p class="initiative-desc">An annual gathering for leaders, researchers, and practitioners at the edge of consciousness, science, and civilizational possibility. One day. Transformative ideas. Lasting community.</p>
           <a href="tcfsc2026.html" class="initiative-link">Explore the Conference →</a>
         </div>
 
-        <div class="initiative-card">
+        <div class="cfs-card">
           <p class="initiative-tag">Event · September 26, 2026</p>
           <h3 class="initiative-title">Mass Meditation Event</h3>
           <p class="initiative-desc">A gathering of six contemplative lineages — TM, Zen, Art of Living, AŠVA, Brahma Kumaris, and the Sadhguru Center at Harvard — sitting together on Boston Common for a group meditation and lineage-led breakouts. Free and open to all.</p>
           <a href="mass-meditation-event.html" class="initiative-link">Explore the Event →</a>
         </div>
 
-        <div class="initiative-card initiative-card--community">
+        <div class="cfs-card">
           <p class="initiative-tag">Community</p>
           <h3 class="initiative-title">Conscious Hoops</h3>
           <p class="initiative-desc">A curated pick-up basketball community in Boston built for people in the wellness, meditation, and consciousness space. Real game. Real community. Every 1st and 4th Saturday, 10AM–12PM.</p>
           <a href="https://conscioushoops.com/" class="initiative-link" target="_blank" rel="noopener noreferrer">Join the Community →</a>
         </div>
 
+      </div>
+
+      <!-- CFA card — new row beneath the 3-up grid -->
+      <div class="initiatives-grid initiatives-grid--single">
+        <div class="cfs-card">
+          <p class="initiative-tag">Accelerator</p>
+          <h3 class="initiative-title">The Conscious Future Accelerator</h3>
+          <p class="initiative-desc">A 16-week cohort for founders building technology for human flourishing — mentorship, community, and investor access, without sacrificing purpose for profit.</p>
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:var(--space-md); margin-top:auto;">
+            <a href="cfa.html" class="initiative-link">Explore the Accelerator →</a>
+            <span class="initiative-tag" style="opacity:0.6;">Coming Soon</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -185,7 +166,7 @@
   <!-- ── Vision ── -->
   <section id="vision">
     <div class="vision-inner">
-      <p class="section-eyebrow">Our Vision</p>
+      <h2 class="section-heading section-heading--gold">Our Vision</h2>
       <blockquote class="vision-statement">
         "A world where the most influential institutions are led by the most conscious people."
       </blockquote>
@@ -195,7 +176,7 @@
           defining currency of leadership. Where the inner life of an organization is as important
           as its strategy. Where civilizational decisions are made from wisdom, not merely from power.
         </p>
-        <p class="section-body" style="margin-top: var(--space-md); font-style: italic;">
+        <p class="section-body vision-coda">
           This is a long arc. We are playing it deliberately.
         </p>
       </div>
@@ -206,8 +187,7 @@
   <!-- ── Involvement ── -->
   <section id="involvement">
     <div class="section-inner">
-      <p class="section-eyebrow">Get Involved</p>
-      <h2 class="section-heading">This Work<br>Needs You</h2>
+      <h2 class="section-heading section-heading--gold">Get Involved</h2>
       <p class="section-body" style="margin: 0 auto var(--space-lg); text-align: center;">
         Whether you are a researcher, practitioner, leader, or someone who simply believes
         the world can be more conscious — there is a place for you here. Join the community.
@@ -227,13 +207,13 @@
   <!-- ── Partners ── -->
   <section id="partners">
     <div class="section-inner">
-      <p class="section-eyebrow">Our Partners</p>
+      <h2 class="section-heading section-heading--gold">Our Partners</h2>
       <div class="partners-grid">
         <a href="https://millionsmeditatingnow.com/" target="_blank" rel="noopener noreferrer" class="partner-link">
-          <img src="assets/partners/millions-meditating.png" alt="Millions Meditating Alliance" class="partner-logo">
+          <img src="assets/partners/millions-meditating.png" alt="Millions Meditating Alliance" class="partner-logo" width="500" height="500" loading="lazy">
         </a>
         <a href="https://asva.life/" target="_blank" rel="noopener noreferrer" class="partner-link">
-          <img src="assets/partners/asva.png" alt="AŠVA" class="partner-logo partner-logo--asva">
+          <img src="assets/partners/asva.png" alt="AŠVA" class="partner-logo partner-logo--asva" width="2550" height="3300" loading="lazy">
         </a>
       </div>
     </div>
@@ -244,7 +224,7 @@
   <footer id="cfs-footer">
     <div class="footer-inner">
       <div style="text-align: center; margin-bottom: var(--space-lg);">
-        <img src="assets/thecfs-logo.png" alt="The Conscious Future Society" style="height: 112px; width: auto;">
+        <img src="assets/thecfs-logo.png" alt="The Conscious Future Society" width="112" height="112" style="height: 112px; width: 112px;" loading="lazy">
       </div>
       <div class="footer-top">
 
@@ -256,7 +236,7 @@
         </div>
 
         <div>
-          <p class="footer-col-label">Navigate</p>
+          <h3 class="footer-col-label">Navigate</h3>
           <ul class="footer-links">
             <li><a href="index.html">Home</a></li>
             <li><a href="#mission">About</a></li>
@@ -267,7 +247,7 @@
         </div>
 
         <div>
-          <p class="footer-col-label">Connect</p>
+          <h3 class="footer-col-label">Connect</h3>
           <ul class="footer-links">
             <li><a href="mailto:hello@theconsciousfuturesociety.com">Email Us</a></li>
             <li><a href="https://www.linkedin.com/company/the-conscious-future-society/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
@@ -290,7 +270,7 @@
   <script src="starfield.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="script.js?v=10"></script>
+  <script src="script.js?v=12"></script>
   <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
