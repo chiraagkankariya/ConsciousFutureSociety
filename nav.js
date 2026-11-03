@@ -17,4 +17,12 @@
       navToggle.setAttribute('aria-expanded', 'false');
     });
   });
+
+  // Condensed state after the hero scrolls off
+  const SCROLL_THRESHOLD = 400;
+  const onScroll = () => {
+    cfsNav.classList.toggle('is-scrolled', window.scrollY > SCROLL_THRESHOLD);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 })();

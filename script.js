@@ -3,6 +3,8 @@ gsap.registerPlugin(ScrollTrigger);
 // Deep-link: if URL has a #hash matching a real section, skip the hero pin
 // and the loading screen so the anchor lands where the user expects.
 const deepLinkTarget = location.hash && document.querySelector(location.hash);
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const skipHero = !!deepLinkTarget || prefersReducedMotion;
 
 // ─────────────────────────────────────────────────────────────
 // IDLE FLOAT — two offset loops create organic drift
@@ -50,8 +52,8 @@ gsap.set('.being', { xPercent: -50, yPercent: -50 });
 gsap.set(['#clone-1', '#clone-2', '#clone-3', '#clone-4', '#clone-5'], { opacity: 0 });
 
 const master = gsap.timeline({
-  paused: !!deepLinkTarget,
-  scrollTrigger: deepLinkTarget ? undefined : {
+  paused: skipHero,
+  scrollTrigger: skipHero ? undefined : {
     trigger: '#hero',
     start:   'top top',
     end:     '+=5000',   // longer scroll = full anim completes before pin releases
@@ -191,6 +193,14 @@ if (navToggle && cfsNav) {
       navToggle.setAttribute('aria-expanded', 'false');
     });
   });
+
+  // Condensed state after the hero scrolls off
+  const NAV_SCROLL_THRESHOLD = 400;
+  const onNavScroll = () => {
+    cfsNav.classList.toggle('is-scrolled', window.scrollY > NAV_SCROLL_THRESHOLD);
+  };
+  window.addEventListener('scroll', onNavScroll, { passive: true });
+  onNavScroll();
 }
 
 
@@ -215,6 +225,10 @@ if (deepLinkTarget) {
   loadingScreen.remove();
   video.play().catch(() => {});
   requestAnimationFrame(() => deepLinkTarget.scrollIntoView());
+} else if (prefersReducedMotion) {
+  // Reduced-motion: skip the loading gate; hero master is paused + unpinned above.
+  loadingScreen.remove();
+  video.play().catch(() => {});
 } else {
   let videoReady = false;
   let minTimePassed = false;
@@ -240,6 +254,13 @@ if (deepLinkTarget) {
     }
   }
 
+  function skipNow() {
+    loadingScreen.classList.add('fade-out');
+    unlockScroll();
+    video.play().catch(() => {});
+    setTimeout(() => loadingScreen.remove(), 2600);
+  }
+
   setTimeout(() => { minTimePassed = true; tryDismiss(); }, 1500);
 
   // Guard against the canplaythrough race: if the video is already buffered
@@ -261,62 +282,11 @@ if (deepLinkTarget) {
     unlockScroll();
     setTimeout(() => loadingScreen.remove(), 2600);
   }, 5000);
-}
 
-const ticker = document.getElementById('domains-ticker');
-const cardWidth = 380 + 32; // card width + gap
-let currentX = 0;
-let resumeTimer = null;
-
-function halfTrack() {
-  return ticker.scrollWidth / 2;
-}
-
-function wrapX(x) {
-  const w = halfTrack();
-  const m = x % w;
-  return m > 0 ? m - w : m;
-}
-
-function pauseTicker() {
-  const matrix = window.getComputedStyle(ticker).transform;
-  if (matrix && matrix !== 'none') {
-    const values = matrix.match(/matrix.*\((.+)\)/)[1].split(', ');
-    currentX = parseFloat(values[4]) || 0;
+  // Skip button: dismisses the gate at any time
+  const skipBtn = document.getElementById('loading-skip');
+  if (skipBtn) {
+    skipBtn.addEventListener('click', skipNow, { once: true });
   }
-  currentX = wrapX(currentX);
-  ticker.style.animation = 'none';
-  ticker.style.transform = `translateX(${currentX}px)`;
-  ticker.style.transition = 'transform 0.5s ease';
 }
 
-function resumeTicker() {
-  const progress = -currentX / halfTrack();
-  const delay = -progress * 32;
-  ticker.style.transition = 'none';
-  ticker.style.transform = '';
-  ticker.style.animation = 'none';
-  void ticker.offsetWidth;
-  ticker.style.animation = `ticker-scroll 32s linear ${delay}s infinite`;
-}
-
-function scheduleResume() {
-  clearTimeout(resumeTimer);
-  resumeTimer = setTimeout(resumeTicker, 3000);
-}
-
-document.querySelector('.ticker-nav--prev').addEventListener('click', () => {
-  pauseTicker();
-  const next = currentX + cardWidth;
-  currentX = (next > 0 || next <= -halfTrack()) ? 0 : next;
-  ticker.style.transform = `translateX(${currentX}px)`;
-  scheduleResume();
-});
-
-document.querySelector('.ticker-nav--next').addEventListener('click', () => {
-  pauseTicker();
-  const next = currentX - cardWidth;
-  currentX = (next > 0 || next <= -halfTrack()) ? 0 : next;
-  ticker.style.transform = `translateX(${currentX}px)`;
-  scheduleResume();
-});
